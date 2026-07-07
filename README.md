@@ -1,83 +1,95 @@
-# MediMind_AI
-An Agentic AI-Powered Multi-Agent Healthcare Companion | Lenovo LEAP: Generative AI &amp; Agentic Systems Engineering Internship
-# MediMind AI
+# 🩺 MediMind AI
 
-## An Agentic AI-Powered Multi-Agent Healthcare Companion
+## AI-Powered Multi-Agent Healthcare Companion
 
-### Lenovo LEAP: Generative AI & Agentic Systems Engineering Internship
+> **Lenovo LEAP: Generative AI & Agentic Systems Engineering Internship**
 
 ---
 
-## Overview
+## 📌 Overview
 
-MediMind AI is an Agentic AI-powered healthcare companion designed to improve patient healthcare management using multiple specialized AI agents. Unlike traditional healthcare reminder applications, MediMind AI autonomously plans, reasons, maintains contextual memory, coordinates specialized AI agents, and executes healthcare workflows with minimal human intervention.
+MediMind AI is an AI-powered Multi-Agent Healthcare Companion that assists users in medication adherence, appointment management, medical report analysis, lifestyle recommendations, and emergency healthcare support.
+
+The system leverages Agentic AI architecture, where multiple specialized AI agents collaborate to provide intelligent, personalized, and proactive healthcare assistance.
 
 ---
 
-## Sustainable Development Goal
+## 🌍 Sustainable Development Goal (SDG)
 
 **SDG 3 – Good Health & Well-being**
 
 ---
 
-## Features
+## 🚨 Problem Statement
 
-- AI Health Coordinator Agent
-- Medication Management Agent
-- Appointment Scheduling Agent
-- Medical Report Analysis
-- Lifestyle Recommendation Agent
-- Emergency Detection Agent
-- Notification Agent
-- Google Authentication
-- AI-powered Report Analysis
-- Multi-Agent Workflow
-- Persistent User Memory
+Millions of patients miss medications, forget appointments, misinterpret medical reports, and fail to maintain consistent healthcare routines.
+
+Current reminder applications provide static notifications but lack intelligent reasoning, contextual memory, and autonomous decision-making.
 
 ---
 
-## Technology Stack
+## 💡 Proposed Solution
+
+MediMind AI introduces a Multi-Agent AI architecture where specialized AI agents collaborate to manage healthcare tasks intelligently.
+
+### Core AI Agents
+
+- 🧠 Health Coordinator Agent
+- 💊 Medication Agent
+- 📅 Appointment Agent
+- 📄 Medical Report Analysis Agent
+- 🥗 Lifestyle Recommendation Agent
+- 🚨 Emergency Alert Agent
+- 🔔 Notification Agent
+
+---
+
+## ⚙️ Technology Stack
 
 - React
 - Tailwind CSS
 - Node.js
 - Express.js
 - n8n
-- OpenAI / Gemini API
+- LangGraph (Planned)
+- OpenAI / Google Gemini API
 - Supabase
 - Google OAuth
 
 ---
 
-## Project Status
+## 📂 Repository Structure
 
-🚧 Currently Under Development
-
----
-
-## Folder Structure
-
+```text
 frontend/
 backend/
 workflows/
 docs/
+assets/
+```
 
 ---
 
-## Future Scope
+## 📈 Project Status
 
-- Smartwatch Integration
-- IoT Health Devices
-- Telemedicine
-- Predictive Healthcare
-- Electronic Health Records
+✅ Documentation Completed
+
+🚧 Development In Progress
 
 ---
 
-Developed by
+## 👩‍💻 Developed By
 
-Anjali Ganeshrao Kawarkhe
+**Anjali Ganeshrao Kawarkhe**
 
-Third Year Mechanical Engineering
+Third Year B.Tech.
+
+Mechanical Engineering Department
 
 Veermata Jijabai Technological Institute (VJTI), Mumbai
+
+---
+
+## 📜 License
+
+Academic Project – Lenovo LEAP Internship Submission
