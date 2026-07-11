@@ -1,0 +1,2368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Reminder | MediMind AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. DESIGN SYSTEM & VARIABLES (Premium Dark Glassmorphism & Neon Glow)
+           ========================================================================== */
+        :root {
+            --bg-base: #081225;
+            --bg-sidebar: rgba(10, 22, 47, 0.7);
+            --bg-glass: rgba(15, 32, 67, 0.45);
+            --bg-glass-hover: rgba(22, 46, 94, 0.6);
+            --border-glass: rgba(0, 212, 255, 0.15);
+            --border-glass-focus: rgba(0, 212, 255, 0.4);
+            
+            --primary: #00D4FF;
+            --primary-glow: rgba(0, 212, 255, 0.3);
+            --secondary: #4F46E5;
+            --secondary-glow: rgba(79, 70, 229, 0.4);
+            --success: #22C55E;
+            --success-glow: rgba(34, 197, 94, 0.3);
+            --danger: #EF4444;
+            --danger-glow: rgba(239, 68, 68, 0.3);
+            --warning: #F59E0B;
+            
+            --text-main: #FFFFFF;
+            --text-muted: #8E9BB2;
+            --text-dim: #5C6B84;
+            
+            --font-main: 'Inter', sans-serif;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 30px;
+            
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --shadow-neon: 0 0 15px var(--primary-glow);
+        }
+
+        /* ==========================================================================
+           2. BASE RESETS & ANIMATED BACKGROUND
+           ========================================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Mesh Background Orbs */
+        .bg-animate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            animation: floatOrb 20s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: var(--primary);
+            animation-duration: 25s;
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: var(--secondary);
+            animation-duration: 30s;
+        }
+
+        .orb-3 {
+            top: 40%;
+            left: 50%;
+            width: 35vw;
+            height: 35vw;
+            background: #7C3AED;
+            animation-duration: 20s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(8%, 12%) scale(1.1); }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(8, 18, 37, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-glass);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ==========================================================================
+           3. APP LAYOUT STRUCTURE
+           ========================================================================== */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ==========================================================================
+           4. SIDEBAR COMPONENT (Consistent App Branding)
+           ========================================================================== */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-glass);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: var(--transition-smooth);
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+        }
+
+        .brand-logo i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+
+        .menu-item a i {
+            font-size: 1.1rem;
+            width: 20px;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+
+        .menu-item:hover a, .menu-item.active a {
+            color: var(--text-main);
+            background: var(--bg-glass-hover);
+            box-shadow: inset 0 0 0 1px var(--border-glass);
+        }
+
+        .menu-item.active a {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: inset 0 0 0 1px var(--primary);
+        }
+
+        .menu-item.active a i {
+            color: var(--primary);
+            text-shadow: var(--shadow-neon);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           5. NAVBAR COMPONENT
+           ========================================================================== */
+        .main-content {
+            margin-left: 260px;
+            flex-grow: 1;
+            min-width: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .navbar {
+            height: 75px;
+            background: rgba(8, 18, 37, 0.4);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            padding: 10px 16px 10px 42px;
+            border-radius: var(--radius-xl);
+            color: white;
+            font-family: var(--font-main);
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-neon);
+            background: var(--bg-glass-hover);
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .live-clock {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-variant-numeric: tabular-nums;
+        }
+
+        #nav-time {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        #nav-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn .badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            background: var(--danger);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--danger);
+        }
+
+        /* Dropdown Menu Architecture */
+        .dropdown-menu {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            width: 320px;
+            background: rgba(10, 22, 47, 0.95);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-premium);
+            padding: 16px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            animation: fadeIn 0.25s ease-out;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.show { display: flex; }
+        .dropdown-header { font-weight: 600; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px;}
+        .dropdown-item { display: flex; gap: 12px; padding: 10px; border-radius: var(--radius-sm); transition: var(--transition-smooth); cursor: pointer;}
+        .dropdown-item:hover { background: var(--bg-glass-hover); }
+        .dropdown-item i { color: var(--primary); margin-top: 3px; }
+
+        /* ==========================================================================
+           6. WORKSPACE CONTENT LAYOUT
+           ========================================================================== */
+        .workspace {
+            padding: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+            background: linear-gradient(to right, #ffffff, #87bfff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Grid Framework */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        .left-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            min-width: 0;
+        }
+
+        /* ==========================================================================
+           7. SUMMARY CARDS SECTION
+           ========================================================================== */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            box-shadow: var(--shadow-premium);
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            background: var(--bg-glass-hover);
+            border-color: rgba(0, 212, 255, 0.3);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.5), 0 0 20px rgba(0, 212, 255, 0.1);
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: transparent;
+        }
+
+        .card-primary::before { background: var(--primary); }
+        .card-success::before { background: var(--success); }
+        .card-danger::before { background: var(--danger); }
+        .card-secondary::before { background: var(--secondary); }
+
+        .summary-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .card-primary .summary-icon { background: rgba(0, 212, 255, 0.1); color: var(--primary); }
+        .card-success .summary-icon { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .card-danger .summary-icon { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+        .card-secondary .summary-icon { background: rgba(79, 70, 229, 0.1); color: var(--secondary); }
+
+        .summary-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .summary-subtext {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        /* ==========================================================================
+           8. TODAY'S MEDICINES COMPONENT
+           ========================================================================== */
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .med-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
+        .med-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            box-shadow: var(--shadow-premium);
+            transition: var(--transition-smooth);
+        }
+
+        .med-card:hover {
+            border-color: rgba(0, 212, 255, 0.25);
+            background: var(--bg-glass-hover);
+        }
+
+        .med-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .med-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+
+        .med-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .med-type-tag {
+            font-size: 0.75rem;
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.08);
+            padding: 4px 10px;
+            border-radius: var(--radius-xl);
+            width: fit-content;
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            font-weight: 500;
+        }
+
+        /* Progress Circle Metric */
+        .med-progress-box {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+        }
+
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform-origin: 50% 50%;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Card Content Inner Spec */
+        .med-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 16px 0;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-dim);
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        /* Dosing Schedule Matrix Visual */
+        .dose-matrix {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        .matrix-pill {
+            flex: 1;
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 6px 4px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-dim);
+        }
+
+        .matrix-pill.active {
+            background: rgba(79, 70, 229, 0.15);
+            border-color: var(--secondary);
+            color: #A5B4FC;
+            font-weight: 600;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: var(--radius-xl);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+        .status-taken { background: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
+        .status-skipped { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+        .med-card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border: 1px solid var(--primary);
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--shadow-neon);
+            transform: translateY(-1px);
+        }
+
+        .btn-glass {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+        }
+
+        .btn-glass:hover {
+            background: var(--bg-glass-hover);
+            border-color: var(--text-muted);
+        }
+
+        .btn-icon-only {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            flex-shrink: 0;
+        }
+
+        /* Card Complete UI Variant Modifiers */
+        .med-card.state-taken {
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        .med-card.state-taken .med-name {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           9. MEDICINE SCHEDULE TIMELINE
+           ========================================================================== */
+        .timeline-container {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-premium);
+        }
+
+        .timeline-track {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding-left: 24px;
+        }
+
+        .timeline-track::before {
+            content: '';
+            position: absolute;
+            left: 5px; top: 8px; bottom: 8px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary), rgba(255,255,255,0.05));
+        }
+
+        .timeline-node {
+            position: relative;
+            display: flex;
+            gap: 24px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -24px; top: 6px;
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--bg-base);
+            border: 3px solid var(--primary);
+            box-shadow: var(--shadow-neon);
+            z-index: 2;
+        }
+
+        .timeline-node.passed .timeline-dot {
+            border-color: var(--success);
+            box-shadow: 0 0 10px var(--success-glow);
+        }
+
+        .timeline-time {
+            width: 85px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+            padding-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .timeline-node.passed .timeline-time {
+            color: var(--text-muted);
+        }
+
+        .timeline-content {
+            flex-grow: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            transition: var(--transition-smooth);
+        }
+
+        .timeline-content:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .timeline-med-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .timeline-med-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            background: rgba(79, 70, 229, 0.15);
+            color: #A5B4FC;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .timeline-med-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .timeline-med-details p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           10. ADD MEDICINE FORM COMPONENT
+           ========================================================================== */
+        .form-container {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-premium);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .form-control {
+            background: rgba(8, 18, 37, 0.5);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition-smooth);
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-neon);
+            background: rgba(8, 18, 37, 0.7);
+        }
+
+        /* Styled Matrix Multi-select For Dosing Reminders Form Component */
+        .form-matrix-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .matrix-checkbox {
+            position: relative;
+            flex: 1;
+        }
+
+        .matrix-checkbox input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0; width: 0;
+        }
+
+        .matrix-label {
+            display: block;
+            text-align: center;
+            padding: 12px 8px;
+            background: rgba(8, 18, 37, 0.5);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-weight: 500;
+        }
+
+        .matrix-checkbox input:checked ~ .matrix-label {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 20px;
+        }
+
+        /* ==========================================================================
+           11. MEDICINE HISTORY ARCHIVE TABLE
+           ========================================================================== */
+        .history-container {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-premium);
+            overflow: hidden;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .custom-table th {
+            padding: 16px;
+            color: var(--text-muted);
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            font-size: 0.85rem;
+        }
+
+        .custom-table td {
+            padding: 18px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+
+        .custom-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .custom-table tbody tr {
+            transition: var(--transition-smooth);
+        }
+
+        .custom-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .table-med-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .table-med-icon {
+            width: 34px;
+            height: 34px;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        /* ==========================================================================
+           12. RIGHT SIDEBAR INFOPANEL
+           ========================================================================== */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .panel-widget {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-premium);
+        }
+
+        .widget-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .widget-title i { color: var(--primary); }
+
+        /* Countdown Visual Alert Module */
+        .countdown-box {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(0, 212, 255, 0.05));
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .countdown-timer {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .countdown-meta {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Water Tracker UI Widget Component */
+        .water-tracker-ui {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .water-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .water-progress-fill {
+            height: 100%;
+            width: 50%; /* JS Interactive Target */
+            background: linear-gradient(to right, var(--secondary), var(--primary));
+            border-radius: var(--radius-xl);
+            transition: var(--transition-smooth);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .water-actions {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+        }
+
+        .water-counter-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* AI Insights Vector Box */
+        .ai-tip-box {
+            background: rgba(0, 212, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .ai-tip-box i {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+        .quick-notes-textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(8, 18, 37, 0.4);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 0.85rem;
+            resize: none;
+            outline: none;
+            transition: var(--transition-smooth);
+        }
+
+        .quick-notes-textarea:focus {
+            border-color: var(--primary);
+            background: rgba(8, 18, 37, 0.6);
+        }
+
+        /* Overall Progress Widget Component */
+        .progress-stats-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .progress-header-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* ==========================================================================
+           13. NOTIFICATION SYSTEM (TOAST NOTIFICATIONS)
+           ========================================================================== */
+        .toast-container {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast-card {
+            background: rgba(10, 22, 47, 0.9);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-left: 4px solid var(--success);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 16px 20px;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            box-shadow: var(--shadow-premium);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: white;
+            min-width: 300px;
+            pointer-events: auto;
+            animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: var(--transition-smooth);
+        }
+
+        .toast-card.toast-danger { border-left-color: var(--danger); }
+        .toast-card.toast-info { border-left-color: var(--primary); }
+
+        .toast-icon { font-size: 1.2rem; }
+        .toast-card.toast-success .toast-icon { color: var(--success); }
+        .toast-card.toast-danger .toast-icon { color: var(--danger); }
+        .toast-card.toast-info .toast-icon { color: var(--primary); }
+
+        .toast-content h5 { font-size: 0.9rem; font-weight: 600; margin-bottom: 2px; }
+        .toast-content p { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* ==========================================================================
+           14. GLOBAL KEYFRAME ANIMATIONS LAYOUT
+           ========================================================================== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        /* ==========================================================================
+           15. RESPONSIVE BREAKPOINTS ENGINE (Mobile, Tablet, Laptop Match Layout)
+           ========================================================================== */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .right-panel {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 24px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .workspace { padding: 20px; }
+            .navbar { padding: 0 20px; }
+            .form-grid { grid-template-columns: 1fr; gap: 16px; }
+            .form-group.full-width { grid-column: span 1; }
+            .med-cards-grid { grid-template-columns: 1fr; }
+            .timeline-track::before { left: 4px; }
+            .timeline-node { gap: 16px; }
+            .timeline-dot { left: -20px; }
+            .timeline-time { width: 70px; font-size: 0.8rem; }
+            .timeline-content { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .search-bar { width: 180px; }
+            .live-clock { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Layer Mechanics -->
+    <div class="bg-animate">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- ==========================================================================
+           SIDEBAR DASHBOARD INTERFACE COMPONENT
+           ========================================================================== */ -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <span class="brand-name">MediMind AI</span>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="#dashboard"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></a>
+                </li>
+                <li class="menu-item active">
+                    <a href="#reminder"><i class="fa-solid fa-clock-rotate-left"></i><span>Reminders</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="#treatment"><i class="fa-solid fa-capsules"></i><span>Treatment Plans</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="#analytics"><i class="fa-solid fa-chart-line"></i><span>Health Insights</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="#appointments"><i class="fa-solid fa-calendar-check"></i><span>Appointments</span></a>
+                </li>
+                <li class="menu-item">
+                    <a href="#settings"><i class="fa-solid fa-sliders"></i><span>Settings</span></a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100" alt="User profile avatar image template" class="user-avatar">
+                <div class="user-info">
+                    <span class="user-name">Alex Morgan</span>
+                    <span class="user-role">Premium Plan Account</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ==========================================================================
+           MAIN CONTENT AREA WORKSPACE CONTEXT
+           ========================================================================== */ -->
+        <main class="main-content">
+            
+            <!-- Navbar Architecture Component -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle Navigation Options Menu Sidebar">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="med-search-input" placeholder="Search medicines or schedule...">
+                    </div>
+                </div>
+
+                <div class="nav-right">
+                    <div class="live-clock">
+                        <span id="nav-time">12:00:00 PM</span>
+                        <span id="nav-date">Monday, June 1, 2026</span>
+                    </div>
+
+                    <div class="nav-actions">
+                        <div style="position: relative;">
+                            <button class="nav-btn" id="notif-btn" aria-label="View Application Notifications">
+                                <i class="fa-solid fa-bell"></i>
+                                <span class="badge"></span>
+                            </button>
+                            <!-- Notification Dropdown Target -->
+                            <div class="dropdown-menu" id="notif-dropdown">
+                                <div class="dropdown-header">Recent Reminders</div>
+                                <div class="dropdown-item">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    <div>
+                                        <p style="font-weight:500; font-size:0.85rem;">Missed Dose: Lipitor</p>
+                                        <p style="font-size:0.75rem; color:var(--text-muted)">Scheduled for 08:00 AM today</p>
+                                    </div>
+                                </div>
+                                <div class="dropdown-item">
+                                    <i class="fa-solid fa-circle-check" style="color:var(--success)"></i>
+                                    <div>
+                                        <p style="font-weight:500; font-size:0.85rem;">Taken: Amoxicillin</p>
+                                        <p style="font-size:0.75rem; color:var(--text-muted)">Logged at 06:05 AM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="nav-btn" aria-label="Access User Support Matrix Console">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Workspace Matrix Segment -->
+            <div class="workspace">
+                
+                <!-- Main Header Title Layout -->
+                <header class="page-header">
+                    <h1 class="page-title">Medicine Reminder</h1>
+                    <p class="page-subtitle">Manage your medicines, reminders and treatment schedule.</p>
+                </header>
+
+                <!-- ==========================================================================
+                   TOP METRIC SUMMARY HIGHLIGHT PANEL CARDS
+                   ========================================================================== */ -->
+                <section class="summary-grid" aria-label="Reminder Summary Overview Cards Engine Metrics">
+                    <div class="summary-card card-primary">
+                        <div class="summary-icon"><i class="fa-solid fa-capsules"></i></div>
+                        <div class="summary-info">
+                            <span class="summary-label">Today's Medicines</span>
+                            <span class="summary-value counter-anim" id="count-total" data-target="4">0</span>
+                            <span class="summary-subtext">Prescribed medications</span>
+                        </div>
+                    </div>
+                    <div class="summary-card card-success">
+                        <div class="summary-icon"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="summary-info">
+                            <span class="summary-label">Completed Doses</span>
+                            <span class="summary-value counter-anim" id="count-completed" data-target="2">0</span>
+                            <span class="summary-subtext">Successfully taken</span>
+                        </div>
+                    </div>
+                    <div class="summary-card card-danger">
+                        <div class="summary-icon"><i class="fa-solid fa-circle-xmark"></i></div>
+                        <div class="summary-info">
+                            <span class="summary-label">Missed Doses</span>
+                            <span class="summary-value counter-anim" id="count-missed" data-target="1">0</span>
+                            <span class="summary-subtext">Requires immediate attention</span>
+                        </div>
+                    </div>
+                    <div class="summary-card card-secondary">
+                        <div class="summary-icon"><i class="fa-solid fa-forward"></i></div>
+                        <div class="summary-info">
+                            <span class="summary-label">Next Reminder</span>
+                            <span class="summary-value" id="stat-next-time" style="font-size:1.35rem; padding: 3px 0;">06:00 PM</span>
+                            <span class="summary-subtext" id="stat-next-name">Metformin</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="main-grid" style="margin-top: 32px;">
+                    
+                    <!-- LEFT CONTAINER SUB-GRID MECHANICS -->
+                    <div class="left-column">
+                        
+                        <!-- ==========================================================================
+                           TODAY'S MEDICINES PREMIUM GLASS INTERACTIVE CARDS MODULE
+                           ========================================================================== */ -->
+                        <section id="todays-medicines-section">
+                            <div class="section-title-wrap">
+                                <h2 class="section-title"><i class="fa-solid fa-calendar-day"></i>Today's Prescribed Routine</h2>
+                            </div>
+                            
+                            <div class="med-cards-grid" id="med-cards-container">
+                                <!-- JS Inject Loop Template Target -->
+                            </div>
+                        </section>
+
+                        <!-- ==========================================================================
+                           TIMELINE GRID VIEW SYSTEM
+                           ========================================================================== */ -->
+                        <section id="timeline-section">
+                            <div class="section-title-wrap">
+                                <h2 class="section-title"><i class="fa-solid fa-timeline"></i>Daily Schedule Log</h2>
+                            </div>
+                            <div class="timeline-container">
+                                <div class="timeline-track" id="timeline-track-container">
+                                    <!-- JS Inject Target Loop For Timeline Nodes Data -->
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- ==========================================================================
+                           ADD MEDICINE MANAGEMENT FORM SCHEMA
+                           ========================================================================== */ -->
+                        <section id="add-medicine-section">
+                            <div class="section-title-wrap">
+                                <h2 class="section-title"><i class="fa-solid fa-square-plus"></i>Schedule New Medication</h2>
+                            </div>
+                            <div class="form-container">
+                                <form id="add-medicine-form" novalidate>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label for="form-med-name">Medicine Name *</label>
+                                            <input type="text" id="form-med-name" class="form-control" placeholder="e.g., Metformin HCL" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="form-med-type">Medicine Type</label>
+                                            <select id="form-med-type" class="form-control">
+                                                <option value="Tablet">Tablet</option>
+                                                <option value="Capsule">Capsule</option>
+                                                <option value="Syrup">Syrup</option>
+                                                <option value="Injection">Injection</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="form-med-dose">Dosage *</label>
+                                            <input type="text" id="form-med-dose" class="form-control" placeholder="e.g., 500mg" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="form-med-doctor">Prescribing Doctor</label>
+                                            <input type="text" id="form-med-doctor" class="form-control" placeholder="Dr. Robert Chen">
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label>Frequency Time Windows (Select all that apply) *</label>
+                                            <div class="form-matrix-selector">
+                                                <label class="matrix-checkbox">
+                                                    <input type="checkbox" name="frequency" value="Morning" checked>
+                                                    <span class="matrix-label">Morning</span>
+                                                </label>
+                                                <label class="matrix-checkbox">
+                                                    <input type="checkbox" name="frequency" value="Afternoon">
+                                                    <span class="matrix-label">Afternoon</span>
+                                                </label>
+                                                <label class="matrix-checkbox">
+                                                    <input type="checkbox" name="frequency" value="Evening">
+                                                    <span class="matrix-label">Evening</span>
+                                                </label>
+                                                <label class="matrix-checkbox">
+                                                    <input type="checkbox" name="frequency" value="Night">
+                                                    <span class="matrix-label">Night</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="form-med-time">Specific Reminder Time *</label>
+                                            <input type="time" id="form-med-time" class="form-control" value="18:00" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="form-med-food">Food Instructions</label>
+                                            <select id="form-med-food" class="form-control">
+                                                <option value="After Food">After Food</option>
+                                                <option value="Before Food">Before Food</option>
+                                                <option value="With Food">With Food</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="form-med-start">Start Date *</label>
+                                            <input type="date" id="form-med-start" class="form-control" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="form-med-end">End Date *</label>
+                                            <input type="date" id="form-med-end" class="form-control" required>
+                                        </div>
+                                        <div class="form-group full-width">
+                                            <label for="form-med-notes">Notes & Warnings</label>
+                                            <textarea id="form-med-notes" class="form-control quick-notes-textarea" placeholder="Take with full glass of water. Avoid alcohol usage."></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="button" id="btn-form-reset" class="btn btn-glass">Reset fields</button>
+                                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-circle-check"></i>Save Medicine</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+
+                        <!-- ==========================================================================
+                           MEDICINE ARCHIVE DATA TABLE SYSTEM
+                           ========================================================================== */ -->
+                        <section id="history-section">
+                            <div class="section-title-wrap">
+                                <h2 class="section-title"><i class="fa-solid fa-clock-rotate-left"></i>Medication Archive Inventory</h2>
+                            </div>
+                            <div class="history-container">
+                                <div class="table-responsive">
+                                    <table class="custom-table" id="archive-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Medicine</th>
+                                                <th>Doctor</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Status</th>
+                                                <th style="text-align:right;">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="archive-table-body">
+                                            <!-- Dynamic Table Generation Output Target -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+
+                    <!-- ==========================================================================
+                       RIGHT CONTROL PANEL BAR LAYOUT CONTEXT
+                       ========================================================================== */ -->
+                    <aside class="right-panel" aria-label="Widget Metrics Sidebar Quick Info Panel Context">
+                        
+                        <!-- Widget Alert Dynamic Mode Countdown -->
+                        <div class="panel-widget">
+                            <h3 class="widget-title"><i class="fa-solid fa-hourglass-half"></i>Next Action Alert</h3>
+                            <div class="countdown-box">
+                                <span class="countdown-timer" id="countdown-timer-display">00:00:00</span>
+                                <span class="countdown-meta" id="countdown-meta-display">Until Metformin (06:00 PM)</span>
+                            </div>
+                        </div>
+
+                        <!-- Track Water Widget Context Dashboard Component -->
+                        <div class="panel-widget">
+                            <h3 class="widget-title"><i class="fa-solid fa-droplet"></i>Hydration Tracker AI</h3>
+                            <div class="water-tracker-ui">
+                                <div class="water-progress-bar">
+                                    <div class="water-progress-fill" id="water-progress"></div>
+                                </div>
+                                <div class="water-actions">
+                                    <span class="water-counter-text" id="water-display-text">1250 / 2500 mL</span>
+                                    <button class="btn btn-primary btn-icon-only" id="btn-add-water" title="Add 250ml Water Metric Log" aria-label="Increment Water Level Intake Metric By 250 Milliliters">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Healthcare Intelligent Insights Tips Context Card -->
+                        <div class="panel-widget">
+                            <h3 class="widget-title"><i class="fa-solid fa-wand-magic-sparkles"></i>MediMind AI Insight</h3>
+                            <div class="ai-tip-box">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                <p id="ai-insight-text">Taking Metformin directly with your evening meals reduces potential digestive discomfort by up to 40%. Ensure hydration values stay optimal.</p>
+                            </div>
+                        </div>
+
+                        <!-- User Notes Quick Reference Pad Block -->
+                        <div class="panel-widget">
+                            <h3 class="widget-title"><i class="fa-solid fa-note-sticky"></i>Quick Session Notes</h3>
+                            <textarea class="quick-notes-textarea" id="session-notes-box" placeholder="Write down symptoms, prescription tracking anomalies, or physiological feedback metrics here..."></textarea>
+                        </div>
+
+                        <!-- Total Progress Widget Architecture Context -->
+                        <div class="panel-widget">
+                            <h3 class="widget-title"><i class="fa-solid fa-circle-nodes"></i>Schedule Adherence</h3>
+                            <div class="progress-stats-block">
+                                <div class="progress-header-row">
+                                    <span>Weekly Accuracy Metric</span>
+                                    <span id="adherence-pct-text">75%</span>
+                                </div>
+                                <div class="water-progress-bar" style="margin-top:8px;">
+                                    <div class="water-progress-fill" id="adherence-progress-bar" style="width: 75%; background: var(--success)"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </aside>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Container Vector Element Targeting Native Notification Toast Triggers -->
+    <div class="toast-container" id="toast-container-root"></div>
+
+    <!-- ==========================================================================
+       16. VANILLA JAVASCRIPT APP ARCHITECTURE MATRIX
+       ========================================================================== */ -->
+    <script>
+        /* ==========================================================================
+           DATA LAYER (State Models)
+           ========================================================================== */
+        let state = {
+            medicines: [
+                {
+                    id: "med-1",
+                    name: "Amoxicillin Trihydrate",
+                    type: "Capsule",
+                    doctor: "Dr. Clara Mendoza",
+                    dose: "500mg",
+                    frequency: ["Morning", "Night"],
+                    time: "06:00",
+                    food: "Before Food",
+                    daysRemaining: 5,
+                    totalDays: 7,
+                    status: "Taken", // Taken, Pending, Skipped
+                    notes: "Complete entire prescription course even if feeling better."
+                },
+                {
+                    id: "med-2",
+                    name: "Lipitor (Atorvastatin)",
+                    type: "Tablet",
+                    doctor: "Dr. Robert Chen",
+                    dose: "20mg",
+                    frequency: ["Morning"],
+                    time: "08:00",
+                    food: "After Food",
+                    daysRemaining: 24,
+                    totalDays: 30,
+                    status: "Missed",
+                    notes: "Avoid eating grapefruit or drinking grapefruit juice."
+                },
+                {
+                    id: "med-3",
+                    name: "Metformin HCL",
+                    type: "Tablet",
+                    doctor: "Dr. Robert Chen",
+                    dose: "850mg",
+                    frequency: ["Evening"],
+                    time: "18:00",
+                    food: "With Food",
+                    daysRemaining: 18,
+                    totalDays: 30,
+                    status: "Pending",
+                    notes: "Monitor blood glucose closely."
+                },
+                {
+                    id: "med-4",
+                    name: "Humalog KwikPen",
+                    type: "Injection",
+                    doctor: "Dr. Sarah Jenkins",
+                    dose: "10 Units",
+                    frequency: ["Night"],
+                    time: "21:00",
+                    food: "Before Food",
+                    daysRemaining: 12,
+                    totalDays: 15,
+                    status: "Pending",
+                    notes: "Store unused pens in refrigeration."
+                }
+            ],
+            waterIntake: 1250,
+            waterTarget: 2500,
+            quickNotes: ""
+        };
+
+        // Static Timeline Mapping Framework Definition
+        const TIMELINE_SLOTS = ["06:00 AM", "08:00 AM", "12:00 PM", "03:00 PM", "06:00 PM", "09:00 PM"];
+
+        /* ==========================================================================
+           CORE ENGINE INITIALIZATION CONTEXT
+           ========================================================================== */
+        document.addEventListener("DOMContentLoaded", () => {
+            initClock();
+            initSidebarMechanics();
+            initDropdowns();
+            initSearchEngine();
+            initFormEngine();
+            hydrateDashboard();
+            runCountersAnimation();
+            startReminderCountdownLoop();
+            
+            // Load Notes Cache Strategy
+            const savedNotes = localStorage.getItem("medimind_notes");
+            if(savedNotes) {
+                document.getElementById("session-notes-box").value = savedNotes;
+                state.quickNotes = savedNotes;
+            }
+            
+            // Textarea Autosave System Bindings
+            document.getElementById("session-notes-box").addEventListener("input", (e) => {
+                state.quickNotes = e.target.value;
+                localStorage.setItem("medimind_notes", e.target.value);
+            });
+
+            // Water Target Click Metrics Hook
+            document.getElementById("btn-add-water").addEventListener("click", incrementWaterTracker);
+
+            // Set Form Date Limits to Current Year (2026)
+            const todayStr = "2026-06-01"; // Simulated system baseline context sync
+            document.getElementById("form-med-start").value = todayStr;
+            document.getElementById("form-med-end").value = "2026-06-15";
+        });
+
+        /* ==========================================================================
+           NAVBAR CLOCK IMPLEMENTATION
+           ========================================================================== */
+        function initClock() {
+            const timeEl = document.getElementById("nav-time");
+            const dateEl = document.getElementById("nav-date");
+            
+            // Base simulated baseline metrics initialization for static generation sync stability
+            let simDate = new Date(2026, 5, 1, 12, 0, 0); 
+            
+            function updateClock() {
+                // Add 1 second per real execution interval metric tick
+                simDate.setSeconds(simDate.getSeconds() + 1);
+                
+                let hours = simDate.getHours();
+                let minutes = simDate.getMinutes();
+                let seconds = simDate.getSeconds();
+                let ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; // convert 0 to 12
+                
+                minutes = minutes < 10 ? '0'+minutes : minutes;
+                seconds = seconds < 10 ? '0'+seconds : seconds;
+                hours = hours < 10 ? '0'+hours : hours;
+
+                timeEl.textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+                
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                dateEl.textContent = simDate.toLocaleDateString('en-US', options);
+            }
+            
+            setInterval(updateClock, 1000);
+            updateClock();
+        }
+
+        /* ==========================================================================
+           UI SIDEBAR NAVIGATION CONTROLS RESPONSIVE WRAPPER
+           ========================================================================== */
+        function initSidebarMechanics() {
+            const toggle = document.getElementById("sidebar-toggle");
+            const sidebar = document.getElementById("sidebar");
+            
+            toggle.addEventListener("click", (e) => {
+                sidebar.classList.toggle("open");
+                e.stopPropagation();
+            });
+
+            document.addEventListener("click", (e) => {
+                if(sidebar.classList.contains("open") && !sidebar.contains(e.target) && e.target !== toggle) {
+                    sidebar.classList.remove("open");
+                }
+            });
+        }
+
+        /* ==========================================================================
+           DROPDOWN INTERACTIVE BEHAVIORS (Notifications)
+           ========================================================================== */
+        function initDropdowns() {
+            const btn = document.getElementById("notif-btn");
+            const dropdown = document.getElementById("notif-dropdown");
+
+            btn.addEventListener("click", (e) => {
+                dropdown.classList.toggle("show");
+                e.stopPropagation();
+            });
+
+            document.addEventListener("click", () => {
+                dropdown.classList.remove("show");
+            });
+        }
+
+        /* ==========================================================================
+           SEARCH BEHAVIORS ROUTINE
+           ========================================================================== */
+        function initSearchEngine() {
+            const input = document.getElementById("med-search-input");
+            input.addEventListener("input", (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const cards = document.querySelectorAll(".med-card");
+                
+                cards.forEach(card => {
+                    const name = card.querySelector(".med-name").textContent.toLowerCase();
+                    const doc = card.querySelector(".info-row:nth-child(1) .info-value").textContent.toLowerCase();
+                    
+                    if(name.includes(query) || doc.includes(query)) {
+                        card.style.display = "flex";
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+            });
+        }
+
+        /* ==========================================================================
+           MAIN DOM RENDER HYDRO-ENGINE
+           ========================================================================== */
+        function hydrateDashboard() {
+            renderMedicineCards();
+            renderTimelineView();
+            renderHistoryTable();
+            recalculateMetricsData();
+        }
+
+        function renderMedicineCards() {
+            const container = document.getElementById("med-cards-container");
+            container.innerHTML = "";
+
+            state.medicines.forEach(med => {
+                const pct = Math.round(((med.totalDays - med.daysRemaining) / med.totalDays) * 100);
+                const radius = 20;
+                const circumference = 2 * Math.PI * radius;
+                const strokeDashoffset = circumference - (pct / 100) * circumference;
+
+                let stateClass = "";
+                let statusBadgeHTML = "";
+                
+                if(med.status === "Taken") {
+                    stateClass = "state-taken";
+                    statusBadgeHTML = `<span class="status-badge status-taken"><i class="fa-solid fa-circle-check"></i>Taken</span>`;
+                } else if(med.status === "Missed") {
+                    statusBadgeHTML = `<span class="status-badge status-danger"><i class="fa-solid fa-circle-xmark"></i>Missed</span>`;
+                } else {
+                    statusBadgeHTML = `<span class="status-badge status-pending"><i class="fa-solid fa-spinner"></i>Pending</span>`;
+                }
+
+                // Parse Frequency Array into Dom Checklist Indicator Matrix
+                const timeWindows = ["Morning", "Afternoon", "Evening", "Night"];
+                let matrixHTML = "";
+                timeWindows.forEach(tw => {
+                    const isActive = med.frequency.includes(tw) ? "active" : "";
+                    matrixHTML += `<div class="matrix-pill ${isActive}">${tw}</div>`;
+                });
+
+                const cardHTML = `
+                    <div class="med-card ${stateClass}" data-id="${med.id}">
+                        <div class="med-card-header">
+                            <div class="med-meta">
+                                <h3 class="med-name">${med.name}</h3>
+                                <span class="med-type-tag">${med.type}</span>
+                            </div>
+                            <div class="med-progress-box">
+                                <svg class="progress-ring" width="50" height="50">
+                                    <circle class="progress-ring__circle" stroke="rgba(255,255,255,0.05)" stroke-width="3" fill="transparent" r="${radius}" cx="25" cy="25"/>
+                                    <circle class="progress-ring__circle" stroke="var(--primary)" stroke-width="3" fill="transparent" r="${radius}" cx="25" cy="25" 
+                                        stroke-dasharray="${circumference} ${circumference}" 
+                                        stroke-dashoffset="${strokeDashoffset}"/>
+                                </svg>
+                                <span class="progress-text">${pct}%</span>
+                            </div>
+                        </div>
+
+                        <div class="med-card-body">
+                            <div class="info-row">
+                                <span class="info-label"><i class="fa-solid fa-user-doctor"></i>Doctor</span>
+                                <span class="info-value">${med.doctor || 'N/A'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label"><i class="fa-solid fa-weight-hanging"></i>Dose Scale</span>
+                                <span class="info-value">${med.dose}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label"><i class="fa-solid fa-bowl-food"></i>Diet Profile</span>
+                                <span class="info-value">${med.food}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label"><i class="fa-solid fa-calendar-day"></i>Horizon Remaining</span>
+                                <span class="info-value">${med.daysRemaining} days left</span>
+                            </div>
+                            <div style="margin-top: 4px;">
+                                <span class="info-label" style="font-size:0.75rem; margin-bottom:6px;">Target Schedules</span>
+                                <div class="dose-matrix">
+                                    ${matrixHTML}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-row">
+                            <span class="info-label">Current Status</span>
+                            ${statusBadgeHTML}
+                        </div>
+
+                        <div class="med-card-actions">
+                            ${med.status !== "Taken" ? `<button class="btn btn-primary" onclick="markAsTakenAction('${med.id}')" style="flex:1;"><i class="fa-solid fa-check"></i>Mark Taken</button>` : ''}
+                            ${med.status === "Pending" ? `<button class="btn btn-glass" onclick="skipAction('${med.id}')">Skip</button>` : ''}
+                            <button class="btn btn-glass btn-icon-only" onclick="triggerDetailsAlert('${med.id}')" title="View Medicine Details Matrix Summary" aria-label="View detailed meta information summary metrics for ${med.name}"><i class="fa-solid fa-circle-info"></i></button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML("beforeend", cardHTML);
+            });
+        }
+
+        function renderTimelineView() {
+            const container = document.getElementById("timeline-track-container");
+            container.innerHTML = "";
+
+            TIMELINE_SLOTS.forEach(slot => {
+                // Convert Slot formats to evaluate targets ("06:00 AM" -> "06:00")
+                let hourPart = parseInt(slot.split(":")[0]);
+                const isPm = slot.includes("PM");
+                if (isPm && hourPart !== 12) hourPart += 12;
+                if (!isPm && hourPart === 12) hourPart = 0;
+                const matchTimeString = `${hourPart < 10 ? '0' + hourPart : hourPart}:00`;
+
+                // Find medicines mapped inside this approximate time string signature layout context
+                const matchedMeds = state.medicines.filter(m => m.time === matchTimeString);
+                
+                // Determine past node styling state parameters based on standard 12:00 PM baseline
+                const isPassed = hourPart < 12; 
+
+                if(matchedMeds.length > 0) {
+                    matchedMeds.forEach(med => {
+                        let statusColor = "var(--primary)";
+                        if(med.status === "Taken") statusColor = "var(--success)";
+                        if(med.status === "Missed") statusColor = "var(--danger)";
+
+                        const nodeHTML = `
+                            <div class="timeline-node ${isPassed ? 'passed' : ''}">
+                                <div class="timeline-dot" style="border-color: ${statusColor}"></div>
+                                <div class="timeline-time">${slot}</div>
+                                <div class="timeline-content">
+                                    <div class="timeline-med-info">
+                                        <div class="timeline-med-icon" style="background:rgba(0,212,255,0.05); color:${statusColor}">
+                                            <i class="fa-solid fa-prescription-bottle-medical"></i>
+                                        </div>
+                                        <div class="timeline-med-details">
+                                            <h4>${med.name}</h4>
+                                            <p>${med.dose} &bull; ${med.food}</p>
+                                        </div>
+                                    </div>
+                                    <span class="status-badge ${med.status==='Taken'?'status-taken':med.status==='Missed'?'status-danger':'status-pending'}">
+                                        ${med.status}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML("beforeend", nodeHTML);
+                    });
+                } else {
+                    // Empty state nodes placeholder track block validation
+                    const nodeHTML = `
+                        <div class="timeline-node ${isPassed ? 'passed' : ''}" style="opacity: 0.4;">
+                            <div class="timeline-dot" style="border-color: rgba(255,255,255,0.1); background: transparent;"></div>
+                            <div class="timeline-time">${slot}</div>
+                            <div class="timeline-content" style="background:transparent; border-style:dashed;">
+                                <span style="font-size:0.8rem; color:var(--text-dim)">No medications scheduled</span>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML("beforeend", nodeHTML);
+                }
+            });
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById("archive-table-body");
+            tbody.innerHTML = "";
+
+            state.medicines.forEach(med => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>
+                        <div class="table-med-cell">
+                            <div class="table-med-icon"><i class="fa-solid fa-capsules"></i></div>
+                            <div>
+                                <div style="font-weight: 600;">${med.name}</div>
+                                <div style="font-size: 0.75rem; color: var(--text-muted);">${med.type} &bull; ${med.dose}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${med.doctor}</td>
+                    <td>2026-05-15</td>
+                    <td>2026-06-15</td>
+                    <td><span class="status-badge ${med.status==='Taken'?'status-taken':med.status==='Missed'?'status-danger':'status-pending'}">${med.status}</span></td>
+                    <td style="text-align:right;">
+                        <button class="btn btn-glass btn-icon-only" onclick="deleteMedicationConfirmation('${med.id}')" title="Delete Medicine History Entity Entry Template Row Record Log" aria-label="Delete medication record entry for ${med.name}" style="border-color:rgba(239,68,68,0.2); color:var(--danger);"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ==========================================================================
+           METRIC RECALCULATION & SCORE ENGINE CORE
+           ========================================================================== */
+        function recalculateMetricsData() {
+            const total = state.medicines.length;
+            const completed = state.medicines.filter(m => m.status === "Taken").length;
+            const missed = state.medicines.filter(m => m.status === "Missed").length;
+
+            document.getElementById("count-total").setAttribute("data-target", total);
+            document.getElementById("count-completed").setAttribute("data-target", completed);
+            document.getElementById("count-missed").setAttribute("data-target", missed);
+            
+            // Dynamic text content immediate updating
+            document.getElementById("count-total").textContent = total;
+            document.getElementById("count-completed").textContent = completed;
+            document.getElementById("count-missed").textContent = missed;
+
+            // Adherence Calculations Logic Engine
+            const adherence = total > 0 ? Math.round((completed / total) * 100) : 0;
+            document.getElementById("adherence-pct-text").textContent = `${adherence}%`;
+            document.getElementById("adherence-progress-bar").style.width = `${adherence}%`;
+
+            // Evaluate next upcoming medication chronological configuration parameters logic
+            const pendingMeds = state.medicines.filter(m => m.status === "Pending");
+            if(pendingMeds.length > 0) {
+                // Sort ascending order logic evaluation sequence tracking module block
+                pendingMeds.sort((a,b) => a.time.localeCompare(b.time));
+                const nextMed = pendingMeds[0];
+                
+                // Format display text format layout
+                let timeTokens = nextMed.time.split(":");
+                let hr = parseInt(timeTokens[0]);
+                let ampm = hr >= 12 ? "PM" : "AM";
+                hr = hr % 12 || 12;
+                let nextFormatted = `${hr}:${timeTokens[1]} ${ampm}`;
+
+                document.getElementById("stat-next-time").textContent = nextFormatted;
+                document.getElementById("stat-next-name").textContent = nextMed.name;
+                document.getElementById("countdown-meta-display").textContent = `Until ${nextMed.name} (${nextFormatted})`;
+            } else {
+                document.getElementById("stat-next-time").textContent = "--:--";
+                document.getElementById("stat-next-name").textContent = "Clear Strategy Routine";
+                document.getElementById("countdown-meta-display").textContent = "All routine steps resolved for the current horizon lifecycle.";
+                document.getElementById("countdown-timer-display").textContent = "00:00:00";
+            }
+        }
+
+        /* ==========================================================================
+           INTERACTIVE ACTION METHODS HOOKS (Taken, Skip, Delete)
+           ========================================================================== */
+        window.markAsTakenAction = function(id) {
+            const med = state.medicines.find(m => m.id === id);
+            if(med) {
+                med.status = "Taken";
+                if(med.daysRemaining > 0) med.daysRemaining--;
+                showToastNotification(`Success Logging`, `${med.name} was marked as taken successfully.`, "success");
+                hydrateDashboard();
+            }
+        };
+
+        window.skipAction = function(id) {
+            const med = state.medicines.find(m => m.id === id);
+            if(med) {
+                med.status = "Skipped";
+                showToastNotification(`Alert Matrix Warning`, `${med.name} dosage reminder skipped.`, "danger");
+                hydrateDashboard();
+            }
+        };
+
+        window.triggerDetailsAlert = function(id) {
+            const med = state.medicines.find(m => m.id === id);
+            if(med) {
+                alert(`MediMind AI Core File: ${med.name}\n-----------------------------\nDosage Format Profile: ${med.dose} (${med.type})\nClinical Instruction: ${med.food}\nNotes & Guidance: ${med.notes}`);
+            }
+        };
+
+        window.deleteMedicationConfirmation = function(id) {
+            const med = state.medicines.find(m => m.id === id);
+            if(med) {
+                const conf = confirm(`Are you absolutely sure you want to remove ${med.name} from active prescription memory cycles?`);
+                if(conf) {
+                    state.medicines = state.medicines.filter(m => m.id !== id);
+                    showToastNotification("Record Purged", "The medication history record was deleted.", "info");
+                    hydrateDashboard();
+                }
+            }
+        };
+
+        /* ==========================================================================
+           FORM VALIDATION & SUBMISSION ARCHITECTURE
+           ========================================================================== */
+        function initFormEngine() {
+            const form = document.getElementById("add-medicine-form");
+            const btnReset = document.getElementById("btn-form-reset");
+
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                
+                // Elements Extraction
+                const name = document.getElementById("form-med-name").value.trim();
+                const type = document.getElementById("form-med-type").value;
+                const dose = document.getElementById("form-med-dose").value.trim();
+                const doctor = document.getElementById("form-med-doctor").value.trim();
+                const time = document.getElementById("form-med-time").value;
+                const food = document.getElementById("form-med-food").value;
+                const start = document.getElementById("form-med-start").value;
+                const end = document.getElementById("form-med-end").value;
+                const notes = document.getElementById("form-med-notes").value.trim();
+
+                // Dynamic Checklist Matrix Parse
+                const freqBoxes = document.querySelectorAll('input[name="frequency"]:checked');
+                let frequency = [];
+                freqBoxes.forEach(box => frequency.push(box.value));
+
+                // Validation Guard Controls Interceptor Check Custom Rules
+                if(!name || !dose || frequency.length === 0 || !time || !start || !end) {
+                    showToastNotification("Validation Warning", "Please fill in all mandatory baseline form parameters marked with *", "danger");
+                    return;
+                }
+
+                // Date Delta Index Math Calculations Framework
+                const dStart = new Date(start);
+                const dEnd = new Date(end);
+                const timeDiff = dEnd.getTime() - dStart.getTime();
+                const totalDays = Math.ceil(timeDiff / (1000 * 3600 * 24)) || 1;
+
+                if(totalDays < 0) {
+                    showToastNotification("Logic Exception", "End date parameters cannot precede project activation parameters.", "danger");
+                    return;
+                }
+
+                // Append Mock Entity Model Construct payload data array layout structural format
+                const newMed = {
+                    id: `med-${Date.now()}`,
+                    name: name,
+                    type: type,
+                    doctor: doctor || "Self-Prescribed Profile",
+                    dose: dose,
+                    frequency: frequency,
+                    time: time,
+                    food: food,
+                    daysRemaining: totalDays,
+                    totalDays: totalDays,
+                    status: "Pending",
+                    notes: notes || "No special constraints documented."
+                };
+
+                state.medicines.push(newMed);
+                showToastNotification("Medication Created", `${name} added successfully to active scheduler routine files.`, "success");
+                
+                form.reset();
+                hydrateDashboard();
+                
+                // Smooth Scroll Up Frame focus focus behavior logic alignment
+                document.getElementById("todays-medicines-section").scrollIntoView({ behavior: 'smooth' });
+            });
+
+            btnReset.addEventListener("click", () => {
+                form.reset();
+                showToastNotification("System Matrix Reset", "Form fields initialized to baseline states.", "info");
+            });
+        }
+
+        /* ==========================================================================
+           WATER TRACKER ENGINE INTERACTION IMPLEMENTATION
+           ========================================================================== */
+        function incrementWaterTracker() {
+            state.waterIntake += 250;
+            if(state.waterIntake > state.waterTarget) {
+                state.waterIntake = 0; // Cycle reset loops for continuous interaction capabilities safely
+                showToastNotification("Hydration Target Achieved", "Intake matrix tracking records refreshed safely.", "success");
+            }
+            
+            // Recompute metrics UI display layouts
+            const pct = Math.min((state.waterIntake / state.waterTarget) * 100, 100);
+            document.getElementById("water-progress").style.width = `${pct}%`;
+            document.getElementById("water-display-text").textContent = `${state.waterIntake} / ${state.waterTarget} mL`;
+        }
+
+        /* ==========================================================================
+           DYNAMIC TIMER COUNTDOWN ENGINE CALCULATION LOOP ROUTINE MODULE
+           ========================================================================== */
+        function startReminderCountdownLoop() {
+            const display = document.getElementById("countdown-timer-display");
+            
+            function tick() {
+                const pendingMeds = state.medicines.filter(m => m.status === "Pending");
+                if(pendingMeds.length === 0) {
+                    display.textContent = "00:00:00";
+                    return;
+                }
+                
+                pendingMeds.sort((a,b) => a.time.localeCompare(b.time));
+                const targetTimeStr = pendingMeds[0].time; // "18:00" format layout structural syntax conversion mapping
+                
+                // Formulate target data index boundary structures context
+                const now = new Date();
+                const tokens = targetTimeStr.split(":");
+                let targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(tokens[0]), parseInt(tokens[1]), 0);
+                
+                // If duration index targets represent structural elements inside past window thresholds boundary configurations, forward time scale metrics index targeting
+                if(targetDate < now) {
+                    targetDate.setDate(targetDate.getDate() + 1);
+                }
+
+                const deltaMs = targetDate - now;
+                
+                // Compute standard HH MM SS formatting logic engine structural arrays layout context
+                let s = Math.floor(deltaMs / 1000);
+                let m = Math.floor(s / 60);
+                let h = Math.floor(m / 60);
+                
+                s = s % 60;
+                m = m % 60;
+                
+                h = h < 10 ? "0" + h : h;
+                m = m < 10 ? "0" + m : m;
+                s = s < 10 ? "0" + s : s;
+
+                display.textContent = `${h}:${m}:${s}`;
+            }
+
+            setInterval(tick, 1000);
+            tick();
+        }
+
+        /* ==========================================================================
+           TOAST NOTIFICATION ENGINE SUBSYSTEM WRAPPER ARCHITECTURE
+           ========================================================================== */
+        function showToastNotification(title, message, type = "success") {
+            const root = document.getElementById("toast-container-root");
+            
+            let iconHTML = `<i class="fa-solid fa-circle-check toast-icon"></i>`;
+            let typeClass = "";
+            
+            if(type === "danger") {
+                iconHTML = `<i class="fa-solid fa-triangle-exclamation toast-icon"></i>`;
+                typeClass = "toast-danger";
+            } else if(type === "info") {
+                iconHTML = `<i class="fa-solid fa-circle-info toast-icon"></i>`;
+                typeClass = "toast-info";
+            }
+
+            const card = document.createElement("div");
+            card.className = `toast-card ${typeClass}`;
+            card.innerHTML = `
+                ${iconHTML}
+                <div class="toast-content">
+                    <h5>${title}</h5>
+                    <p>${message}</p>
+                </div>
+            `;
+
+            root.appendChild(card);
+
+            // Automatic removal metrics after animation lifespan configuration boundaries wrap up
+            setTimeout(() => {
+                card.style.animation = "fadeOut 0.3s forwards ease-in";
+                setTimeout(() => {
+                    card.remove();
+                }, 300);
+            }, 3500);
+        }
+
+        /* ==========================================================================
+           COUNTERS ACCELERATION ANIMATION CONTROLLER MODULE
+           ========================================================================== */
+        function runCountersAnimation() {
+            const counters = document.querySelectorAll(".counter-anim");
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute("data-target")) || 0;
+                let current = 0;
+                const step = target > 0 ? Math.ceil(target / 20) : 1;
+                
+                const timer = setInterval(() => {
+                    current += step;
+                    if(current >= target) {
+                        current = target;
+                        clearInterval(timer);
+                    }
+                    counter.textContent = current;
+                }, 40);
+            });
+        }
+    </script>
+</body>
+</html>

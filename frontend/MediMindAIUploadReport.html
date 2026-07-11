@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Medical Report | MediMind AI</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. CSS VARIABLES & CORE STYLES
+           ========================================================================== */
+        :root {
+            --bg-base: #081225;
+            --bg-sidebar: rgba(13, 27, 56, 0.7);
+            --bg-navbar: rgba(13, 27, 56, 0.6);
+            --bg-card: rgba(20, 35, 65, 0.45);
+            --bg-card-hover: rgba(28, 48, 88, 0.6);
+            
+            --primary: #00D4FF;
+            --primary-glow: rgba(0, 212, 255, 0.3);
+            --secondary: #4F46E5;
+            --secondary-glow: rgba(79, 70, 229, 0.3);
+            --success: #22C55E;
+            --success-glow: rgba(34, 197, 94, 0.2);
+            --danger: #EF4444;
+            --danger-glow: rgba(239, 68, 68, 0.2);
+            
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --text-dim: #64748B;
+            
+            --border-glass: rgba(255, 255, 255, 0.07);
+            --border-active: rgba(0, 212, 255, 0.4);
+            
+            --blur-glass: 16px;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --sidebar-width: 260px;
+            --navbar-height: 70px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Ambient Animated Background Mesh */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.15;
+            animation: pulseOrbs 12s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            top: -10%;
+            right: 10%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary);
+        }
+
+        .orb-2 {
+            bottom: -5%;
+            left: 5%;
+            width: 600px;
+            height: 600px;
+            background: var(--secondary);
+            animation-delay: -4s;
+        }
+
+        @keyframes pulseOrbs {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.12; }
+            100% { transform: scale(1.15) translate(30px, 40px); opacity: 0.22; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(8, 18, 37, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* ==========================================================================
+           2. GLASSMORPHISM SIDEBAR
+           ========================================================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(var(--blur-glass));
+            -webkit-backdrop-filter: blur(var(--blur-glass));
+            border-right: 1px solid var(--border-glass);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .sidebar-brand {
+            height: var(--navbar-height);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .brand-logo {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #FFF 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo i {
+            -webkit-text-fill-color: initial;
+            color: var(--primary);
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+        }
+
+        .sidebar-item a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .sidebar-item a:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sidebar-item.active a {
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.06);
+            border-color: rgba(0, 212, 255, 0.15);
+            font-weight: 600;
+            box-shadow: inset 0 0 12px rgba(0, 212, 255, 0.05);
+        }
+
+        .sidebar-item i {
+            font-size: 18px;
+            width: 22px;
+            text-align: center;
+        }
+
+        .sidebar-user {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(8, 18, 37, 0.3);
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        /* ==========================================================================
+           3. APP CONTAINER & NAVBAR
+           ========================================================================== */
+        .app-container {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .navbar {
+            height: var(--navbar-height);
+            background: var(--bg-navbar);
+            backdrop-filter: blur(var(--blur-glass));
+            -webkit-backdrop-filter: blur(var(--blur-glass));
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: calc(100% - var(--sidebar-width));
+            z-index: 90;
+            transition: var(--transition);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 280px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            padding: 9px 16px 9px 40px;
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            font-size: 13px;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .datetime-display {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #live-time {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        #live-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-dot {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        /* Notifications Dropdown UI */
+        .dropdown-panel {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            width: 320px;
+            background: rgba(13, 27, 56, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 16px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+        }
+
+        .dropdown-panel.show {
+            display: flex;
+        }
+
+        .dropdown-header {
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .notification-item {
+            display: flex;
+            gap: 12px;
+            padding: 8px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.02);
+            font-size: 12px;
+        }
+
+        .notification-item i {
+            color: var(--primary);
+            margin-top: 2px;
+        }
+
+        /* ==========================================================================
+           4. MAIN CONTENT AREA (GRID LAYOUT)
+           ========================================================================== */
+        .main-content {
+            margin-top: var(--navbar-height);
+            padding: 32px;
+            flex-grow: 1;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 32px;
+            max-width: 1600px;
+            width: 100%;
+            align-items: start;
+        }
+
+        /* Header block inside layout */
+        .page-header {
+            grid-column: 1 / -1;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Left Workspace Column */
+        .workspace-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Card Engine Definition */
+        .premium-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(var(--blur-glass));
+            -webkit-backdrop-filter: blur(var(--blur-glass));
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 
+                        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        /* ==========================================================================
+           5. UPLOAD ARCHITECTURE (DRAG & DROP ZONE)
+           ========================================================================== */
+        .drop-zone {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-md);
+            padding: 48px 24px;
+            text-align: center;
+            background: rgba(8, 18, 37, 0.2);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .drop-zone:hover, .drop-zone.drag-over {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.02);
+            box-shadow: 0 0 24px rgba(0, 212, 255, 0.05),
+                        inset 0 0 16px rgba(0, 212, 255, 0.02);
+        }
+
+        .upload-icon-wrapper {
+            width: 74px;
+            height: 74px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            color: var(--primary);
+            font-size: 28px;
+            transition: var(--transition);
+        }
+
+        .drop-zone:hover .upload-icon-wrapper {
+            transform: translateY(-4px);
+            color: #FFFFFF;
+            background: var(--primary);
+            box-shadow: 0 0 20px var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Animated Pulsing Ring around Icon during drag */
+        .drop-zone.drag-over .upload-icon-wrapper {
+            animation: pulseRing 1.5s infinite;
+        }
+
+        @keyframes pulseRing {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+
+        .drop-zone-text {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .drop-zone-muted {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .file-specs {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .file-specs span i {
+            margin-right: 4px;
+            color: var(--text-muted);
+        }
+
+        #hidden-file-input {
+            display: none;
+        }
+
+        /* ==========================================================================
+           6. CONTROL CONSOLE (BUTTONS)
+           ========================================================================== */
+        .control-console {
+            margin-top: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid transparent;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--border-glass);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary) 0%, #3B82F6 100%);
+            color: #FFFFFF;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.45);
+        }
+
+        .btn-primary:disabled {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--border-glass);
+            color: var(--text-dim);
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* ==========================================================================
+           7. TRACKING PANELS (PROGRESS & FILE PREVIEW)
+           ========================================================================== */
+        .tracking-panel {
+            margin-top: 24px;
+            background: rgba(8, 18, 37, 0.3);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            display: none; /* Controlled dynamically via JS */
+        }
+
+        .panel-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .file-meta-block {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .file-icon-badge {
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: var(--radius-sm);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .file-summary h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            max-width: 320px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-summary p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-btn:hover {
+            color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Progress Framework */
+        .progress-engine {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-metrics {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-text {
+            color: var(--primary);
+        }
+
+        .track-rail {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .track-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            border-radius: 10px;
+            transition: width 0.1s linear;
+        }
+
+        /* Success & Loading Indicator Overrides */
+        .status-success { color: var(--success) !important; }
+        .track-success { background: var(--success) !important; }
+
+        /* Data Grid Details */
+        .detail-grid {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-glass);
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .detail-node {
+            font-size: 12px;
+        }
+
+        .detail-node span {
+            color: var(--text-dim);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .detail-node p {
+            font-weight: 500;
+            color: var(--text-main);
+        }
+
+        /* ==========================================================================
+           8. RIGHT INFORMATION PILLAR
+           ========================================================================== */
+        .pillar-column {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 12px;
+        }
+
+        .section-header i {
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .section-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Recent Activity Component */
+        .report-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .report-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+
+        .report-item:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 255, 255, 0.12);
+            transform: translateX(4px);
+        }
+
+        .report-info-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .report-type-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .report-item:hover .report-type-avatar {
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.08);
+        }
+
+        .report-title-meta {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .report-title-meta h4 {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .report-title-meta span {
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: 2px;
+        }
+
+        .report-action-zone {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .status-badge.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .btn-view-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-view-link:hover {
+            color: #FFFFFF;
+            text-shadow: 0 0 8px var(--primary);
+        }
+
+        /* AI System Matrix Info Card */
+        .ai-matrix-card {
+            background: linear-gradient(145deg, rgba(79, 70, 229, 0.15), rgba(0, 212, 255, 0.05));
+            border-color: rgba(0, 212, 255, 0.15);
+        }
+
+        .ai-matrix-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+        }
+
+        .matrix-intro {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .matrix-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .matrix-node {
+            display: flex;
+            gap: 12px;
+        }
+
+        .matrix-node i {
+            color: var(--primary);
+            font-size: 14px;
+            margin-top: 3px;
+            filter: drop-shadow(0 0 4px var(--primary-glow));
+        }
+
+        .matrix-node-text h5 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .matrix-node-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* ==========================================================================
+           9. RESPONSIVE MEDIA ENGINE
+           ========================================================================== */
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .pillar-column {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .app-container {
+                margin-left: 0;
+                width: 100%;
+            }
+            .navbar {
+                width: 100%;
+                padding: 0 20px;
+            }
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pillar-column {
+                grid-template-columns: 1fr;
+            }
+            .navbar {
+                justify-content: space-between;
+            }
+            .search-wrapper {
+                display: none; /* Hide on small screens for structure */
+            }
+            .datetime-display {
+                display: none;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .premium-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Grid Canvas Background -->
+    <div class="ambient-bg">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <!-- ==========================================================================
+       SIDEBAR REPLICA
+       ========================================================================== -->
+    <aside class="sidebar" id="sidebar-panel">
+        <div class="sidebar-brand">
+            <div class="brand-logo">
+                <i class="fa-solid(fa-brain) fa-circle-nodes"></i> MediMind AI
+            </div>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="sidebar-item">
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </a>
+            </li>
+            <li class="sidebar-item active">
+                <a href="upload-report.html">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload Report
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="patient-records.html">
+                    <i class="fa-solid fa-folder-open"></i> Medical Records
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="ai-consultant.html">
+                    <i class="fa-solid fa-user-doctor"></i> AI Consultant
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="settings.html">
+                    <i class="fa-solid fa-sliders"></i> Settings
+                </a>
+            </li>
+        </ul>
+        <div class="sidebar-user">
+            <div class="user-avatar">DR</div>
+            <div class="user-info">
+                <span class="user-name">Dr. Alex Ross</span>
+                <span class="user-role">Premium Tier</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+       APP WORKSPACE CONTAINER
+       ========================================================================== -->
+    <div class="app-container">
+        
+        <!-- NAVBAR REPLICA -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <button class="menu-toggle" id="toggle-sidebar" aria-label="Toggle Navigation Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" class="search-input" placeholder="Search parameters, files, patients...">
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="datetime-display">
+                    <span id="live-time">00:00:00 AM</span>
+                    <span id="live-date">Loading System Date...</span>
+                </div>
+                <div class="nav-actions">
+                    <div class="nav-btn" id="notify-bell" title="System Notifications">
+                        <i class="fa-solid fa-bell"></i>
+                        <div class="badge-dot"></div>
+                        
+                        <!-- Notifications Dropdown Layout -->
+                        <div class="dropdown-panel" id="notify-dropdown">
+                            <div class="dropdown-header">
+                                <span>Recent Operations</span>
+                                <a href="#" style="color:var(--primary); text-decoration:none; font-size:11px;">Clear All</a>
+                            </div>
+                            <div class="notification-item">
+                                <i class="fa-solid fa-circle-check"></i>
+                                <div>System initialized successfully. Ready for diagnostic input.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-btn" title="System Status Indicator">
+                        <i class="fa-solid fa-server" style="color: var(--primary);"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- MAIN LAYOUT COGNITION GRID -->
+        <main class="main-content">
+            
+            <!-- Page Header Header Zone -->
+            <div class="page-header">
+                <h1 class="page-title">Upload Medical Report</h1>
+                <p class="page-subtitle">Upload your blood report, prescription or medical document for AI analysis.</p>
+            </div>
+
+            <!-- Workspace Matrix (Left) -->
+            <div class="workspace-column">
+                <section class="premium-card">
+                    
+                    <!-- Core Drag Drop UI Zone -->
+                    <div class="drop-zone" id="drop-target">
+                        <input type="file" id="hidden-file-input" accept=".pdf,.png,.jpg,.jpeg,.docx">
+                        <div class="upload-icon-wrapper">
+                            <i class="fa-solid fa-cloud-arrow-up" id="upload-icon"></i>
+                        </div>
+                        <h3 class="drop-zone-text">Drag & drop your files here or click to browse</h3>
+                        <p class="drop-zone-muted">Support formats: PDF, PNG, JPG, JPEG, DOCX up to 20MB</p>
+                        
+                        <div class="file-specs">
+                            <span><i class="fa-solid fa-file-shield"></i> Secure end-to-end encryption</span>
+                            <span><i class="fa-solid fa-database"></i> HIPPA Compliant Processing</span>
+                        </div>
+                    </div>
+
+                    <!-- Upload State and Progress Interface Engine -->
+                    <div class="tracking-panel" id="upload-tracking-widget">
+                        <div class="panel-row">
+                            <div class="file-meta-block">
+                                <div class="file-icon-badge" id="preview-badge">
+                                    <i class="fa-solid fa-file-medical"></i>
+                                </div>
+                                <div class="file-summary">
+                                    <h4 id="preview-name">Report_Data.pdf</h4>
+                                    <p id="preview-calculated-size">0.0 MB</p>
+                                </div>
+                            </div>
+                            <button class="remove-btn" id="btn-abort-file" title="Purge File From Scope">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+
+                        <!-- Progress Matrix -->
+                        <div class="progress-engine">
+                            <div class="progress-metrics">
+                                <div class="status-wrapper">
+                                    <i class="fa-solid fa-circle-notch fa-spin" id="status-spinner"></i>
+                                    <span id="status-text-msg" class="status-text">Staging document...</span>
+                                </div>
+                                <span id="progress-percent-count">0%</span>
+                            </div>
+                            <div class="track-rail">
+                                <div class="track-fill" id="progress-track-bar"></div>
+                            </div>
+                        </div>
+
+                        <!-- File Parameter Metadata Sub-Grid -->
+                        <div class="detail-grid">
+                            <div class="detail-node">
+                                <span>Document Typology</span>
+                                <p id="meta-type">Unknown</p>
+                            </div>
+                            <div class="detail-node">
+                                <span>Ingestion Timestamp</span>
+                                <p id="meta-time">00:00</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Interface Operational Trigger Base -->
+                    <div class="control-console">
+                        <button class="btn btn-secondary" id="btn-clear-form">Clear</button>
+                        <button class="btn btn-secondary" id="btn-browse-trigger"><i class="fa-solid fa-folder-open"></i> Choose File</button>
+                        <button class="btn btn-primary" id="btn-submit-analysis" disabled>
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Analyze with AI
+                        </button>
+                    </div>
+
+                </section>
+            </div>
+
+            <!-- Contextual Information Column (Right) -->
+            <div class="pillar-column">
+                
+                <!-- Recent Ingestion Records Panel -->
+                <section class="premium-card">
+                    <div class="section-header">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <h3>Recent Uploaded Reports</h3>
+                    </div>
+                    <div class="report-list">
+                        <!-- Record Node 1 -->
+                        <div class="report-item">
+                            <div class="report-info-block">
+                                <div class="report-type-avatar"><i class="fa-solid fa-droplet" style="color:#EF4444;"></i></div>
+                                <div class="report-title-meta">
+                                    <h4>Blood Report</h4>
+                                    <span>July 10, 2026</span>
+                                </div>
+                            </div>
+                            <div class="report-action-zone">
+                                <span class="status-badge completed">Analyzed</span>
+                                <a href="#" class="btn-view-link">View</a>
+                            </div>
+                        </div>
+                        <!-- Record Node 2 -->
+                        <div class="report-item">
+                            <div class="report-info-block">
+                                <div class="report-type-avatar"><i class="fa-solid fa-compact-disc"></i></div>
+                                <div class="report-title-meta">
+                                    <h4>MRI Scan</h4>
+                                    <span>July 08, 2026</span>
+                                </div>
+                            </div>
+                            <div class="report-action-zone">
+                                <span class="status-badge completed">Analyzed</span>
+                                <a href="#" class="btn-view-link">View</a>
+                            </div>
+                        </div>
+                        <!-- Record Node 3 -->
+                        <div class="report-item">
+                            <div class="report-info-block">
+                                <div class="report-type-avatar"><i class="fa-solid fa-file-prescription"></i></div>
+                                <div class="report-title-meta">
+                                    <h4>Prescription</h4>
+                                    <span>July 04, 2026</span>
+                                </div>
+                            </div>
+                            <div class="report-action-zone">
+                                <span class="status-badge completed">Analyzed</span>
+                                <a href="#" class="btn-view-link">View</a>
+                            </div>
+                        </div>
+                        <!-- Record Node 4 -->
+                        <div class="report-item">
+                            <div class="report-info-block">
+                                <div class="report-type-avatar"><i class="fa-solid fa-bone"></i></div>
+                                <div class="report-title-meta">
+                                    <h4>X-Ray Report</h4>
+                                    <span>June 28, 2026</span>
+                                </div>
+                            </div>
+                            <div class="report-action-zone">
+                                <span class="status-badge completed">Analyzed</span>
+                                <a href="#" class="btn-view-link">View</a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Processing Capabilities Breakdown -->
+                <section class="premium-card ai-matrix-card">
+                    <div class="section-header">
+                        <i class="fa-solid fa-microchip"></i>
+                        <h3>How AI Analyzes Reports</h3>
+                    </div>
+                    <p class="matrix-intro">MediMind neural engines structurally scan raw biological data feeds to parse unstructured variables into immediate clinical insights.</p>
+                    <div class="matrix-grid">
+                        <div class="matrix-node">
+                            <i class="fa-solid fa-vial"></i>
+                            <div class="matrix-node-text">
+                                <h5>Blood Values Tracking</h5>
+                                <p>Extracts baseline metrics against standard bio-markers arrays.</p>
+                            </div>
+                        </div>
+                        <div class="matrix-node">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <div class="matrix-node-text">
+                                <h5>Abnormalities Isolation</h5>
+                                <p>Flagging critical deviations outside baseline physiologic variance.</p>
+                            </div>
+                        </div>
+                        <div class="matrix-node">
+                            <i class="fa-solid fa-pills"></i>
+                            <div class="matrix-node-text">
+                                <h5>Medicine Detection</h5>
+                                <p>Cross-references active prescriptions to eliminate contraindications.</p>
+                            </div>
+                        </div>
+                        <div class="matrix-node">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <div class="matrix-node-text">
+                                <h5>Health Risks Projection</h5>
+                                <p>Identifies statistical risk markers based on aggregated historical data trends.</p>
+                            </div>
+                        </div>
+                        <div class="matrix-node">
+                            <i class="fa-solid fa-notes-medical"></i>
+                            <div class="matrix-node-text">
+                                <h5>Recommendations Output</h5>
+                                <p>Provides contextual next-step options for primary clinical validation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==========================================================================
+       10. CORE FUNCTIONAL JAVASCRIPT
+       ========================================================================== */ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // UI Element Registers
+            const dropTarget = document.getElementById('drop-target');
+            const fileInput = document.getElementById('hidden-file-input');
+            const btnBrowse = document.getElementById('btn-browse-trigger');
+            const btnClear = document.getElementById('btn-clear-form');
+            const btnSubmit = document.getElementById('btn-submit-analysis');
+            const btnAbort = document.getElementById('btn-abort-file');
+            
+            const trackingWidget = document.getElementById('upload-tracking-widget');
+            const previewName = document.getElementById('preview-name');
+            const previewSize = document.getElementById('preview-calculated-size');
+            const progressTrack = document.getElementById('progress-track-bar');
+            const progressPercent = document.getElementById('progress-percent-count');
+            const statusText = document.getElementById('status-text-msg');
+            const statusSpinner = document.getElementById('status-spinner');
+            const previewBadge = document.getElementById('preview-badge');
+            
+            const metaType = document.getElementById('meta-type');
+            const metaTime = document.getElementById('meta-time');
+            
+            const sidebarPanel = document.getElementById('sidebar-panel');
+            const btnSidebarToggle = document.getElementById('toggle-sidebar');
+            const notifyBell = document.getElementById('notify-bell');
+            const notifyDropdown = document.getElementById('notify-dropdown');
+
+            let SimulatedUploadTimer = null;
+
+            // Supported Parameters Configuration
+            const AllowedFormats = ['pdf', 'png', 'jpg', 'jpeg', 'docx'];
+            const MaximumSizeBytes = 20 * 1024 * 1024; // 20 Megabytes
+
+            /* ==========================================
+               CHRONOS CLOCK & NOTIFICATION HANDLERS
+               ========================================== */
+            function stepSystemClock() {
+                const standardTimeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+                const standardDateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                
+                const frameDate = new Date();
+                document.getElementById('live-time').textContent = frameDate.toLocaleTimeString('en-US', standardTimeOptions);
+                document.getElementById('live-date').textContent = frameDate.toLocaleDateString('en-US', standardDateOptions);
+            }
+            setInterval(stepSystemClock, 1000);
+            stepSystemClock();
+
+            // Toggle Mobile Navigation Sidebar View Overlay
+            btnSidebarToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebarPanel.classList.toggle('mobile-open');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!sidebarPanel.contains(e.target) && e.target !== btnSidebarToggle) {
+                    sidebarPanel.classList.remove('mobile-open');
+                }
+                if (!notifyBell.contains(e.target)) {
+                    notifyDropdown.classList.remove('show');
+                }
+            });
+
+            // Action Panel Notifications Toggle Control
+            notifyBell.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifyDropdown.classList.toggle('show');
+            });
+
+            /* ==========================================
+               INGESTION FLOW & DRAG AND DROP ARCHITECTURE
+               ========================================== */
+            btnBrowse.addEventListener('click', () => fileInput.click());
+
+            fileInput.addEventListener('change', (e) => {
+                if(e.target.files.length > 0) {
+                    processFileInstance(e.target.files[0]);
+                }
+            });
+
+            dropTarget.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropTarget.classList.add('drag-over');
+            });
+
+            dropTarget.addEventListener('dragleave', () => {
+                dropTarget.classList.remove('drag-over');
+            });
+
+            dropTarget.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropTarget.classList.remove('drag-over');
+                if(e.dataTransfer.files.length > 0) {
+                    processFileInstance(e.dataTransfer.files[0]);
+                }
+            });
+
+            /* ==========================================
+               VALIDATION CORE LOGIC & PROCESSING PIPELINE
+               ========================================== */
+            function processFileInstance(fileObj) {
+                // Break down validation mechanics
+                const fileNameSegments = fileObj.name.split('.');
+                const derivedExtension = fileNameSegments[fileNameSegments.length - 1].toLowerCase();
+                
+                if (!AllowedFormats.includes(derivedExtension)) {
+                    alert(`Invalid format layout: ".${derivedExtension}". Please present standardized files (${AllowedFormats.join(', ').toUpperCase()}).`);
+                    clearTargetWorkspace();
+                    return;
+                }
+
+                if (fileObj.size > MaximumSizeBytes) {
+                    alert(`File size warning. Selected document scope exceeds maximum threshold of 20 Megabytes.`);
+                    clearTargetWorkspace();
+                    return;
+                }
+
+                // Render Ingestion Progress States
+                trackingWidget.style.display = 'block';
+                previewName.textContent = fileObj.name;
+                previewSize.textContent = (fileObj.size / (1024 * 1024)).toFixed(2) + ' MB';
+                
+                // Set metadata variables
+                metaType.textContent = derivedExtension.toUpperCase();
+                const currentLocalTime = new Date();
+                metaTime.textContent = currentLocalTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+                // Map specific visual badge context
+                mapVisualBadgeType(derivedExtension);
+                
+                // Initialize async progress engine mockup simulation
+                executeSimulatedIngestionProgress();
+            }
+
+            function mapVisualBadgeType(ext) {
+                previewBadge.style.color = 'var(--primary)';
+                previewBadge.style.background = 'rgba(0, 212, 255, 0.1)';
+                if (ext === 'pdf') {
+                    previewBadge.innerHTML = '<i class="fa-solid fa-file-pdf"></i>';
+                } else if (['jpg', 'jpeg', 'png'].includes(ext)) {
+                    previewBadge.innerHTML = '<i class="fa-solid fa-file-image"></i>';
+                } else {
+                    previewBadge.innerHTML = '<i class="fa-solid fa-file-word"></i>';
+                }
+            }
+
+            function executeSimulatedIngestionProgress() {
+                // Clear any running operational tracks
+                clearInterval(SimulatedUploadTimer);
+                btnSubmit.disabled = true;
+                
+                let localIncrement = 0;
+                progressTrack.style.width = '0%';
+                progressTrack.classList.remove('track-success');
+                progressPercent.textContent = '0%';
+                
+                statusText.textContent = 'Uploading data arrays...';
+                statusText.classList.remove('status-success');
+                
+                statusSpinner.className = 'fa-solid fa-circle-notch fa-spin';
+
+                SimulatedUploadTimer = setInterval(() => {
+                    localIncrement += Math.floor(Math.random() * 12) + 5;
+                    if(localIncrement >= 100) {
+                        localIncrement = 100;
+                        clearInterval(SimulatedUploadTimer);
+                        
+                        // Set Completion States
+                        statusSpinner.className = 'fa-solid fa-circle-check';
+                        statusText.textContent = 'Verification complete. Document staged.';
+                        statusText.classList.add('status-success');
+                        progressTrack.classList.add('track-success');
+                        
+                        btnSubmit.disabled = false;
+                    }
+                    progressTrack.style.width = `${localIncrement}%`;
+                    progressPercent.textContent = `${localIncrement}%`;
+                }, 150);
+            }
+
+            /* ==========================================
+               SYSTEM RESET & TERMINAL ACTIONS
+               ========================================== */
+            function clearTargetWorkspace() {
+                clearInterval(SimulatedUploadTimer);
+                fileInput.value = '';
+                trackingWidget.style.display = 'none';
+                btnSubmit.disabled = true;
+                
+                progressTrack.style.width = '0%';
+                progressPercent.textContent = '0%';
+                statusText.textContent = 'Staging document...';
+                statusText.classList.remove('status-success');
+                progressTrack.classList.remove('track-success');
+            }
+
+            btnAbort.addEventListener('click', clearTargetWorkspace);
+            btnClear.addEventListener('click', clearTargetWorkspace);
+
+            // Analysis Submission Trigger Action
+            btnSubmit.addEventListener('click', () => {
+                if(!btnSubmit.disabled) {
+                    statusText.textContent = 'Transferring structural payload to analysis space...';
+                    window.location.href = 'report-analysis.html';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

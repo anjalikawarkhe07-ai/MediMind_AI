@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency SOS | MediMind AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-primary: #081225;
+            --bg-sidebar: rgba(13, 27, 56, 0.7);
+            --bg-card: rgba(20, 35, 69, 0.55);
+            --bg-card-hover: rgba(30, 50, 95, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(0, 212, 255, 0.2);
+            
+            --color-primary: #00D4FF;
+            --color-secondary: #4F46E5;
+            --color-success: #22C55E;
+            --color-danger: #EF4444;
+            --color-warning: #F59E0B;
+            
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --text-dim: #64748B;
+            
+            --shadow-premium: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.4);
+            --shadow-danger-glow: 0 0 30px rgba(239, 68, 68, 0.6);
+            
+            --transition-fast: 0.2s ease;
+            --transition-normal: 0.3s ease;
+            --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --sidebar-width: 260px;
+            --navbar-height: 70px;
+        }
+
+        /* Base & Reset Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--color-primary);
+        }
+
+        /* Animated Background Particles Mesh */
+        .bg-animated-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bg-glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+            mix-blend-mode: screen;
+            animation: floatOrb 20s infinite alternate ease-in-out;
+        }
+
+        .orb-1 {
+            top: -10%;
+            right: 10%;
+            width: 500px;
+            height: 500px;
+            background: var(--color-primary);
+        }
+
+        .orb-2 {
+            bottom: -10%;
+            left: 5%;
+            width: 600px;
+            height: 600px;
+            background: var(--color-secondary);
+            animation-duration: 25s;
+        }
+
+        .orb-3 {
+            top: 40%;
+            right: 35%;
+            width: 350px;
+            height: 350px;
+            background: var(--color-danger);
+            opacity: 0.08;
+            animation-duration: 18s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 40px) scale(1.1); }
+        }
+
+        /* Glassmorphism Reusable Style */
+        .glass-panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            box-shadow: var(--shadow-premium);
+            transition: border-color var(--transition-normal), background var(--transition-normal), transform var(--transition-normal);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Application Layout Structure */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ==========================================================
+           SIDEBAR SYSTEM
+           ========================================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-glass);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: transform var(--transition-slow);
+        }
+
+        .sidebar-brand {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .brand-logo i {
+            color: var(--text-main);
+            font-size: 18px;
+        }
+
+        .brand-name {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(to right, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 24px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .menu-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            padding-left: 12px;
+            margin-bottom: 8px;
+            margin-top: 12px;
+        }
+
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            border-radius: 12px;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .menu-item a:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-item.active a {
+            color: var(--text-main);
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.1);
+        }
+
+        .menu-item.active a i {
+            color: var(--color-danger);
+            animation: pulseIcon 2s infinite alternate;
+        }
+
+        @keyframes pulseIcon {
+            0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(239, 68, 68, 0.5)); }
+            100% { transform: scale(1.1); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.9)); }
+        }
+
+        .sidebar-user {
+            padding: 16px;
+            border-top: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0,0,0,0.15);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--border-glass);
+            object-fit: cover;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================
+           MAIN CONTENT AREA & NAVBAR
+           ========================================================== */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all var(--transition-slow);
+        }
+
+        .navbar {
+            height: var(--navbar-height);
+            background: rgba(8, 18, 37, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-glass);
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sidebar-toggle {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--transition-fast);
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .search-bar {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 300px;
+            transition: all var(--transition-fast);
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.15);
+            width: 340px;
+        }
+
+        .search-bar i {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .live-datetime {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: var(--text-muted);
+            background: rgba(255,255,255,0.03);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+        }
+
+        .live-datetime div i {
+            color: var(--color-primary);
+            margin-right: 6px;
+        }
+
+        .nav-action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition-fast);
+        }
+
+        .nav-action-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-action-btn .badge-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-danger);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--color-danger);
+        }
+
+        /* Notification Dropdown Container */
+        .dropdown-wrapper {
+            position: relative;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 320px;
+            background: rgba(13, 27, 56, 0.95);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            box-shadow: var(--shadow-premium);
+            padding: 16px;
+            display: none;
+            z-index: 200;
+            animation: slideDown 0.3s ease;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .noti-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid var(--border-glass);
+            padding-bottom: 8px;
+        }
+
+        .noti-item {
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.02);
+            margin-bottom: 8px;
+            font-size: 13px;
+            border-left: 3px solid var(--color-danger);
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==========================================================
+           EMERGENCY SOS PAGE BODY ARCHITECTURE
+           ========================================================== */
+        .content-body {
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 32px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            flex-grow: 1;
+        }
+
+        .page-header {
+            grid-column: 1 / -1;
+            margin-bottom: 8px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-header h1 i {
+            color: var(--color-danger);
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .page-header p {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-top: 4px;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.15); }
+            40% { transform: scale(1); }
+            60% { transform: scale(1.1); }
+            80% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Left/Main Structural Layout Grid */
+        .workspace-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Main SOS Hero Section */
+        .sos-hero-card {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: linear-gradient(135deg, rgba(20, 35, 69, 0.6), rgba(40, 20, 30, 0.4));
+        }
+
+        .sos-hero-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .sos-pulse-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 24px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sos-glow-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            animation: radarPulse 2.5s infinite cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        .sos-glow-ring:nth-child(2) {
+            animation-delay: 0.8s;
+        }
+
+        .sos-glow-ring:nth-child(3) {
+            animation-delay: 1.6s;
+        }
+
+        .sos-trigger-btn {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #EF4444, #B91C1C);
+            border: 6px solid rgba(255,255,255,0.1);
+            box-shadow: var(--shadow-danger-glow);
+            color: var(--text-main);
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            z-index: 10;
+            transition: all var(--transition-normal);
+            position: relative;
+            user-select: none;
+        }
+
+        .sos-trigger-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 45px rgba(239, 68, 68, 0.9);
+            border-color: rgba(255,255,255,0.25);
+        }
+
+        .sos-trigger-btn:active {
+            transform: scale(0.95);
+        }
+
+        .sos-trigger-btn i {
+            font-size: 24px;
+            margin-bottom: 2px;
+        }
+
+        .sos-status-badge {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #FFA5A5;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .sos-status-badge .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--color-danger);
+            border-radius: 50%;
+            display: inline-block;
+            animation: flash 1s infinite alternate;
+        }
+
+        @keyframes flash {
+            from { opacity: 0.3; }
+            to { opacity: 1; }
+        }
+
+        @keyframes radarPulse {
+            0% { transform: scale(0.6); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .sos-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        /* Action Row Utility Controls */
+        .control-action-row {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .btn-premium {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+            text-decoration: none;
+        }
+
+        .btn-danger {
+            background: var(--color-danger);
+            color: var(--text-main);
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+        }
+        .btn-danger:hover {
+            background: #DC2626;
+            transform: translateY(-2px);
+        }
+
+        .btn-glass {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border-glass);
+            color: var(--text-main);
+        }
+        .btn-glass:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary-glow {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--color-primary);
+        }
+        .btn-primary-glow:hover {
+            background: rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Section Block Utility Elements */
+        .section-block-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-block-title i {
+            color: var(--color-primary);
+        }
+
+        /* Emergency Contacts Architecture Grid */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .contact-card {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--color-primary);
+        }
+
+        .contact-card.priority-high::after {
+            background: var(--color-danger);
+        }
+
+        .contact-card-top {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .contact-img-wrapper {
+            position: relative;
+        }
+
+        .contact-avatar-placeholder {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--color-primary);
+        }
+
+        .contact-card.priority-high .contact-avatar-placeholder {
+            color: var(--color-danger);
+        }
+
+        .contact-meta-info h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .contact-meta-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .contact-phone-number {
+            font-size: 16px;
+            font-weight: 700;
+            color: #e2e8f0;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            background: rgba(0,0,0,0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .contact-phone-number i {
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        .contact-card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-action-small {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid var(--border-glass);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+            transition: all var(--transition-fast);
+        }
+
+        .btn-action-small:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .btn-action-small.btn-call {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.2);
+            color: #4ADE80;
+        }
+        .btn-action-small.btn-call:hover {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        /* Dual Layout Section: Live Location + Medical Info */
+        .dual-data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* Live Location Block Components */
+        .location-module {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .map-vector-placeholder {
+            height: 180px;
+            background: radial-gradient(circle at 70% 30%, rgba(0, 212, 255, 0.15), transparent 60%),
+                        linear-gradient(45deg, rgba(8, 18, 37, 0.9), rgba(20, 35, 69, 0.9));
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Abstract Premium Grid Pattern simulating radar/map grid lines */
+        .map-vector-placeholder::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            transform: rotate(15deg);
+        }
+
+        .map-radar-glow {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 2px solid var(--color-primary);
+            border-radius: 50%;
+            animation: mapPulse 2s infinite ease-out;
+        }
+
+        .map-pin-icon {
+            font-size: 28px;
+            color: var(--color-danger);
+            position: relative;
+            z-index: 5;
+            filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.8));
+            animation: bouncePin 1s infinite alternate ease-in-out;
+        }
+
+        @keyframes mapPulse {
+            0% { transform: scale(0.3); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+
+        @keyframes bouncePin {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .location-metrics-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .metric-item-box {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-glass);
+            padding: 10px 14px;
+            border-radius: 10px;
+        }
+
+        .metric-item-box span {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .metric-item-box p {
+            font-size: 14px;
+            font-weight: 600;
+            font-family: monospace;
+            color: var(--text-main);
+            margin-top: 2px;
+        }
+
+        .full-width-metric {
+            grid-column: 1 / -1;
+        }
+
+        /* Medical Information Panel */
+        .medical-profile-module {
+            padding: 24px;
+        }
+
+        .med-info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .med-info-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+        }
+
+        .med-info-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .med-info-label i {
+            width: 16px;
+            color: var(--color-primary);
+        }
+
+        .med-info-value {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .med-info-value.badge-red {
+            background: rgba(239, 68, 68, 0.2);
+            color: #FFA5A5;
+            padding: 2px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Emergency Symptom Checklist */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 16px;
+        }
+
+        .checklist-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            transition: all var(--transition-fast);
+        }
+
+        .checklist-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .checklist-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+            border: 2px solid var(--text-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition-fast);
+            flex-shrink: 0;
+        }
+
+        .checklist-checkbox i {
+            font-size: 11px;
+            color: transparent;
+            transition: color var(--transition-fast);
+        }
+
+        .checklist-card.selected {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .checklist-card.selected .checklist-checkbox {
+            border-color: var(--color-danger);
+            background: var(--color-danger);
+        }
+
+        .checklist-card.selected .checklist-checkbox i {
+            color: #ffffff;
+        }
+
+        .checklist-card-label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Nearby Hospitals Showcase Modules */
+        .hospitals-container-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .hospital-premium-card {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .hospital-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .hospital-name-box h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .hospital-metrics-subrow {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 4px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .hospital-metrics-subrow .star-rating {
+            color: var(--color-warning);
+        }
+
+        .badge-status-pill {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .badge-pill-success {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ADE80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .hospital-features-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .feature-tag {
+            font-size: 11px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-glass);
+            padding: 4px 10px;
+            border-radius: 6px;
+            color: var(--text-muted);
+        }
+
+        .feature-tag.accent-red {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #FFA5A5;
+        }
+
+        .hospital-action-footer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        /* Animated Live SOS Workflow Timeline */
+        .timeline-wrapper-card {
+            padding: 24px;
+        }
+
+        .timeline-flow-track {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-flow-track::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            z-index: 1;
+        }
+
+        .timeline-progress-line {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(to right, var(--color-danger), var(--color-primary));
+            z-index: 2;
+            transition: width var(--transition-slow);
+        }
+
+        .timeline-node-point {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 3;
+            width: 90px;
+        }
+
+        .node-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-dim);
+            transition: all var(--transition-normal);
+        }
+
+        .timeline-node-point.completed .node-circle {
+            border-color: var(--color-danger);
+            color: var(--color-danger);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .timeline-node-point.active .node-circle {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            box-shadow: 0 0 15px var(--color-primary);
+            animation: pulseActiveNode 1.5s infinite alternate;
+        }
+
+        @keyframes pulseActiveNode {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .node-label-text {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .timeline-node-point.active .node-label-text {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* ==========================================================
+           RIGHT UTILITY MONITOR PANEL
+           ========================================================== */
+        .right-monitor-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .readiness-score-widget {
+            padding: 24px;
+            text-align: center;
+        }
+
+        .circular-gauge-box {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 16px auto;
+        }
+
+        .svg-gauge {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .svg-gauge-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 8;
+        }
+
+        .svg-gauge-fill {
+            fill: none;
+            stroke: url(#gaugeGradient);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 44; /* 90% representation */
+            transition: stroke-dashoffset var(--transition-slow);
+        }
+
+        .gauge-inner-val {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .gauge-inner-val h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .gauge-inner-val p {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Hardware & Network OS Systems Panel */
+        .system-status-widget {
+            padding: 20px;
+        }
+
+        .sys-status-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .sys-status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sys-item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .sys-item-left i {
+            width: 16px;
+            font-size: 14px;
+        }
+
+        .sys-item-right {
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .sys-item-right.status-online { color: var(--color-success); }
+        .sys-item-right.status-good { color: var(--color-primary); }
+
+        /* Tactical First Aid Advice Module */
+        .tips-module-card {
+            padding: 20px;
+        }
+
+        .tips-scroller-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .tip-item-node {
+            padding: 12px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: 10px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .tip-icon-bullet {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .tip-body-content h5 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .tip-body-content p {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* ==========================================================
+           MODALS & DIALOG WORKFLOW SYSTEMS
+           ========================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(4, 9, 20, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-normal);
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            width: 100%;
+            max-width: 460px;
+            background: #0d1b38;
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            box-shadow: var(--shadow-premium);
+            padding: 32px;
+            text-align: center;
+            transform: scale(0.9);
+            transition: transform var(--transition-normal);
+        }
+
+        .modal-overlay.show .modal-container {
+            transform: scale(1);
+        }
+
+        .modal-icon-header {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 28px;
+        }
+
+        .modal-icon-header.danger-theme {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--color-danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-icon-header.success-theme {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--color-success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            animation: scaleUpCheck 0.4s ease-out forwards;
+        }
+
+        @keyframes scaleUpCheck {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-container h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .modal-container p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        .modal-actions-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-actions-footer .btn-premium {
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Countdown Visualizing Node inside SOS Confirmation Modal */
+        .countdown-timer-circle {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--color-danger);
+            margin: 16px 0;
+        }
+
+        /* Ripple Effect Framework Class */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: rippleEffect 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* ==========================================================
+           RESPONSIVE VIEWPORT BREAKPOINTS
+           ========================================================== */
+        @media (max-width: 1200px) {
+            .content-body {
+                grid-template-columns: 1fr;
+            }
+            .right-monitor-panel {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 24px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+            .sidebar-toggle {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 16px;
+            }
+            .search-bar {
+                display: none; /* Hide wide components on small viewports */
+            }
+            .content-body {
+                padding: 16px;
+            }
+            .dual-data-grid {
+                grid-template-columns: 1fr;
+            }
+            .sos-hero-card {
+                padding: 24px;
+            }
+            .timeline-flow-track {
+                flex-direction: column;
+                gap: 24px;
+                align-items: flex-start;
+                padding-left: 20px;
+            }
+            .timeline-flow-track::before {
+                width: 3px;
+                height: 100%;
+                left: 39px;
+                top: 0;
+            }
+            .timeline-progress-line {
+                width: 3px !important;
+                height: 0%;
+                left: 39px;
+                top: 0;
+                transition: height var(--transition-slow);
+            }
+            .timeline-node-point {
+                flex-direction: row;
+                text-align: left;
+                width: 100%;
+                gap: 16px;
+            }
+            .node-label-text {
+                margin-top: 0;
+            }
+            .control-action-row {
+                flex-direction: column;
+            }
+            .control-action-row .btn-premium {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Particle Mesh Background -->
+    <div class="bg-animated-mesh">
+        <div class="bg-glow-orb orb-1"></div>
+        <div class="bg-glow-orb orb-2"></div>
+        <div class="bg-glow-orb orb-3"></div>
+    </div>
+
+    <div class="app-container">
+        
+        <!-- ==========================================================
+             SIDEBAR DESIGN LANGUAGE
+             ========================================================== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <span class="brand-name">MediMind AI</span>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-label">Core Dashboard</li>
+                <li class="menu-item">
+                    <a href="#"><i class="fa-solid fa-chart-pie"></i> Overview</a>
+                </li>
+                <li class="menu-item">
+                    <a href="#"><i class="fa-solid fa-heart-pulse"></i> Health Vitals</a>
+                </li>
+                <li class="menu-item">
+                    <a href="#"><i class="fa-solid fa-user-doctor"></i> AI Consultation</a>
+                </li>
+                
+                <li class="menu-item">
+                    <a href="#"><i class="fa-solid fa-file-medical"></i> Medical Records</a>
+                </li>
+
+                <li class="menu-label">System Security</li>
+                <li class="menu-item active">
+                    <a href="#"><i class="fa-solid fa-triangle-exclamation"></i> Emergency SOS</a>
+                </li>
+                <li class="menu-item">
+                    <a href="#"><i class="fa-solid fa-gear"></i> Settings</a>
+                </li>
+            </ul>
+
+            <div class="sidebar-user">
+                <!-- Fallback user graphical avatar placeholder -->
+                <div style="width:40px; height:40px; border-radius:50%; background: var(--color-secondary); display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px; border:2px solid var(--border-glass)">JD</div>
+                <div class="user-info">
+                    <span class="user-name">Alexander Wright</span>
+                    <span class="user-role">Premium Subscriber</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ==========================================================
+             MAIN APPLICATION WORKSPACE
+             ========================================================== -->
+        <div class="main-content">
+            
+            <!-- TOP APP NAVBAR -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Navigation Sidebar">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="search-bar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" placeholder="Search medical topics, health metrics..." id="navSearch">
+                    </div>
+                </div>
+
+                <div class="nav-right">
+                    <div class="live-datetime">
+                        <div id="liveDate"><i class="fa-regular fa-calendar"></i>--/--/----</div>
+                        <div id="liveTime"><i class="fa-regular fa-clock"></i>00:00:00</div>
+                    </div>
+
+                    <div class="dropdown-wrapper">
+                        <div class="nav-action-btn" id="notiBellBtn" title="Alert Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            <div class="badge-dot"></div>
+                        </div>
+                        
+                        <div class="notification-dropdown" id="notiDropdown">
+                            <div class="noti-header">
+                                <h5 style="font-size: 14px; font-weight:600;">Critical System Notifications</h5>
+                                <span style="font-size: 11px; color: var(--color-primary); cursor:pointer;">Clear</span>
+                            </div>
+                            <div class="noti-item">
+                                <strong>High Pulse Alert</strong>: Detected abnormal baseline trend variance 12m ago.
+                            </div>
+                            <div class="noti-item" style="border-left-color: var(--color-warning)">
+                                <strong>System Update</strong>: Emergency protocols optimized.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="nav-action-btn" title="Quick Toolkit Actions">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- EMERGENCY CONTAINER GRID BODY -->
+            <main class="content-body">
+                
+                <div class="page-header">
+                    <h1><i class="fa-solid fa-circle-exclamation"></i> Emergency SOS</h1>
+                    <p>Instant critical event management and medical emergency broadcast orchestration panel.</p>
+                </div>
+
+                <!-- LEFT COLUMN PANELS -->
+                <div class="workspace-layout">
+                    
+                    <!-- HERO: THE RED SOS DISPATCH TRIGGER CARD -->
+                    <section class="glass-panel text-center sos-hero-card">
+                        <div class="sos-status-badge">
+                            <span class="dot"></span> System Ready • Encrypted Tunnel Standby
+                        </div>
+                        <h2 style="font-size: 24px; font-weight: 700;">Critical Response System</h2>
+                        <p style="color: var(--text-muted); font-size:14px; max-width: 480px; margin-top: 4px;">
+                            Pressing the button initiates an emergency workflow simulation, alerting dummy nodes, configuring medical profiles, and routing geographical coordinates.
+                        </p>
+
+                        <div class="sos-pulse-container">
+                            <div class="sos-glow-ring"></div>
+                            <div class="sos-glow-ring"></div>
+                            <div class="sos-glow-ring"></div>
+                            <button class="sos-trigger-btn" id="sosMainBtn">
+                                <i class="fa-solid fa-circle-radiation"></i>
+                                <span>SOS</span>
+                            </button>
+                        </div>
+
+                        <p class="sos-subtitle">Press only during a medical emergency.</p>
+                        
+                        <div class="control-action-row">
+                            <button class="btn-premium btn-danger" id="sosQuickTrigger"><i class="fa-solid fa-bolt"></i> Instant Trigger</button>
+                            <button class="btn-premium btn-glass" id="cancelSosBtn" disabled><i class="fa-solid fa-ban"></i> Cancel Active Alert</button>
+                        </div>
+                    </section>
+
+                    <!-- LIVE INCIDENT ACTION WORKFLOW TIMELINE -->
+                    <section class="glass-panel timeline-wrapper-card">
+                        <h3 class="section-block-title"><i class="fa-solid fa-network-wired"></i> Live Broadcast Dispatch Sequence</h3>
+                        
+                        <div class="timeline-flow-track">
+                            <div class="timeline-progress-line" id="timelineProgress"></div>
+                            
+                            <div class="timeline-node-point completed" id="node1">
+                                <div class="node-circle"><i class="fa-solid fa-fingerprint"></i></div>
+                                <div class="node-label-text">SOS Sent</div>
+                            </div>
+                            <div class="timeline-node-point" id="node2">
+                                <div class="node-circle"><i class="fa-solid fa-location-crosshairs"></i></div>
+                                <div class="node-label-text">Telemetry Pack</div>
+                            </div>
+                            <div class="timeline-node-point" id="node3">
+                                <div class="node-circle"><i class="fa-solid fa-users"></i></div>
+                                <div class="node-label-text">Contacts Alerted</div>
+                            </div>
+                            <div class="timeline-node-point" id="node4">
+                                <div class="node-circle"><i class="fa-solid fa-hospital-user"></i></div>
+                                <div class="node-label-text">EMS Dispatch</div>
+                            </div>
+                            <div class="timeline-node-point" id="node5">
+                                <div class="node-circle"><i class="fa-solid fa-truck-medical"></i></div>
+                                <div class="node-label-text">Responder Lock</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- DUAL COLUMN DATA DISPLAY: LIVE TELEMETRY LOGS + MED INSIGHTS -->
+                    <div class="dual-data-grid">
+                        
+                        <!-- LIVE TELEMETRY COORDINATES MAP WIDGET -->
+                        <section class="glass-panel location-module">
+                            <h3 class="section-block-title"><i class="fa-solid fa-satellite-dish"></i> Telemetry GPS Matrix</h3>
+                            <div class="map-vector-placeholder">
+                                <div class="map-radar-glow"></div>
+                                <i class="fa-solid fa-location-dot map-pin-icon"></i>
+                            </div>
+                            <div class="location-metrics-table">
+                                <div class="metric-item-box">
+                                    <span>Latitude Target</span>
+                                    <p id="latVal">37.7749° N</p>
+                                </div>
+                                <div class="metric-item-box">
+                                    <span>Longitude Target</span>
+                                    <p id="lonVal">-122.4194° W</p>
+                                </div>
+                                <div class="metric-item-box full-width-metric">
+                                    <span>Estimated Street Address Vector</span>
+                                    <p id="addrVal" style="font-family: inherit; font-size:13px;">Processing triangulation data...</p>
+                                </div>
+                            </div>
+                            <button class="btn-premium btn-primary-glow" id="shareLocBtn" style="justify-content: center;"><i class="fa-solid fa-share-nodes"></i> Regenerate Geolocation Coordinates</button>
+                        </section>
+
+                        <!-- STATIC ENCRYPTED HEALTH RECORD MATRIX -->
+                        <section class="glass-panel medical-profile-module">
+                            <h3 class="section-block-title"><i class="fa-solid fa-shield-medical"></i> Encrypted Core Medical Profile</h3>
+                            <div class="med-info-list">
+                                <div class="med-info-row">
+                                    <div class="med-info-label"><i class="fa-solid fa-droplet"></i> Blood Group Architecture</div>
+                                    <div class="med-info-value badge-red">O- Negative (Universal)</div>
+                                </div>
+                                <div class="med-info-row">
+                                    <div class="med-info-label"><i class="fa-solid fa-hand-dots"></i> Immunological Allergies</div>
+                                    <div class="med-info-value" style="color:#F59E0B">Penicillin, Peanuts</div>
+                                </div>
+                                <div class="med-info-row">
+                                    <div class="med-info-label"><i class="fa-solid fa-notes-medical"></i> Diagnosed Pathologies</div>
+                                    <div class="med-info-value">Hypertension (Mild)</div>
+                                </div>
+                                <div class="med-info-row">
+                                    <div class="med-info-label"><i class="fa-solid fa-capsules"></i> Active Pharmacology</div>
+                                    <div class="med-info-value">Lisinopril 10mg QD</div>
+                                </div>
+                                <div class="med-info-row">
+                                    <div class="med-info-label"><i class="fa-solid fa-passport"></i> Carrier Insurance ID</div>
+                                    <div class="med-info-value" style="font-family: monospace;">BCBS-983274-MD</div>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top: 14px;">
+                                <button class="btn-action-small" id="shareProfileBtn"><i class="fa-solid fa-qrcode"></i> Share Profile</button>
+                                <button class="btn-action-small" id="downloadCardBtn"><i class="fa-solid fa-address-card"></i> Emergency ID</button>
+                            </div>
+                        </section>
+                    </div>
+
+                    <!-- SYMPTOM MATRIX CHECKLIST PACK -->
+                    <section class="glass-panel" style="padding: 24px;">
+                        <h3 class="section-block-title"><i class="fa-solid fa-square-poll-horizontal"></i> Dynamic Symptom Matrix Triage Tags</h3>
+                        <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">Select active indicators to enrich data packets dispatched to first responders.</p>
+                        <div class="checklist-grid">
+                            <div class="checklist-card" onclick="toggleChecklistCard(this)">
+                                <div class="checklist-checkbox"><i class="fa-solid fa-check"></i></div>
+                                <span class="checklist-card-label">Acute Dyspnea</span>
+                            </div>
+                            <div class="checklist-card" onclick="toggleChecklistCard(this)">
+                                <div class="checklist-checkbox"><i class="fa-solid fa-check"></i></div>
+                                <span class="checklist-card-label">Loss of Tonus</span>
+                            </div>
+                            <div class="checklist-card" onclick="toggleChecklistCard(this)">
+                                <div class="checklist-checkbox"><i class="fa-solid fa-check"></i></div>
+                                <span class="checklist-card-label">Hemorrhage</span>
+                            </div>
+                            <div class="checklist-card" onclick="toggleChecklistCard(this)">
+                                <div class="checklist-checkbox"><i class="fa-solid fa-check"></i></div>
+                                <span class="checklist-card-label">Angina / Chest Pain</span>
+                            </div>
+                            <div class="checklist-card" onclick="toggleChecklistCard(this)">
+                                <div class="checklist-checkbox"><i class="fa-solid fa-check"></i></div>
+                                <span class="checklist-card-label">Hyperpyrexia</span>
+                            </div>
+                            <div class="checklist-card" onclick="toggleChecklistCard(this)">
+                                <div class="checklist-checkbox"><i class="fa-solid fa-check"></i></div>
+                                <span class="checklist-card-label">Trauma Impact</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- LOCAL ESCALATION NODES: NEARBY HEALTHCARE FACILITIES -->
+                    <section>
+                        <h3 class="section-block-title"><i class="fa-solid fa-hospital"></i> Proximate Emergency Networks (Triangulated)</h3>
+                        <div class="hospitals-container-grid">
+                            
+                            <!-- HOSPITAL NODE 1 -->
+                            <div class="glass-panel hospital-premium-card">
+                                <div class="hospital-card-header">
+                                    <div class="hospital-name-box">
+                                        <h4>St. Jude Advanced Medical Center</h4>
+                                        <div class="hospital-metrics-subrow">
+                                            <span><i class="fa-solid fa-location-arrow"></i> 0.8 Miles</span>
+                                            <span class="star-rating"><i class="fa-solid fa-star"></i> 4.9</span>
+                                        </div>
+                                    </div>
+                                    <span class="badge-status-pill badge-pill-success">Open Now</span>
+                                </div>
+                                <div class="hospital-features-badges">
+                                    <span class="feature-tag accent-red"><i class="fa-solid fa-truck-ramp-box"></i> Level 1 Trauma</span>
+                                    <span class="feature-tag"><i class="fa-solid fa-radiation"></i> 24/7 Imaging</span>
+                                </div>
+                                <div class="hospital-action-footer">
+                                    <button class="btn-action-small"><i class="fa-solid fa-diamond-turn-right"></i> Navigate</button>
+                                    <button class="btn-action-small btn-call"><i class="fa-solid fa-phone"></i> Dial ER</button>
+                                </div>
+                            </div>
+
+                            <!-- HOSPITAL NODE 2 -->
+                            <div class="glass-panel hospital-premium-card">
+                                <div class="hospital-card-header">
+                                    <div class="hospital-name-box">
+                                        <h4>City General Trauma Center</h4>
+                                        <div class="hospital-metrics-subrow">
+                                            <span><i class="fa-solid fa-location-arrow"></i> 2.4 Miles</span>
+                                            <span class="star-rating"><i class="fa-solid fa-star"></i> 4.7</span>
+                                        </div>
+                                    </div>
+                                    <span class="badge-status-pill badge-pill-success">Open Now</span>
+                                </div>
+                                <div class="hospital-features-badges">
+                                    <span class="feature-tag accent-red"><i class="fa-solid fa-heart-pulse"></i> Cardiac Hub</span>
+                                    <span class="feature-tag"><i class="fa-solid fa-baby"></i> Pediatric ER</span>
+                                </div>
+                                <div class="hospital-action-footer">
+                                    <button class="btn-action-small"><i class="fa-solid fa-diamond-turn-right"></i> Navigate</button>
+                                    <button class="btn-action-small btn-call"><i class="fa-solid fa-phone"></i> Dial ER</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- DIRECT DIAL RESPONDER MATRIX -->
+                    <section>
+                        <h3 class="section-block-title"><i class="fa-solid fa-address-book"></i> Broadcast Recipient Directory</h3>
+                        <div class="contacts-grid">
+                            
+                            <!-- CONTACT MODULE: SP1 -->
+                            <div class="glass-panel contact-card priority-high">
+                                <div class="contact-card-top">
+                                    <div class="contact-img-wrapper">
+                                        <div class="contact-avatar-placeholder"><i class="fa-solid fa-user-shield"></i></div>
+                                    </div>
+                                    <div class="contact-meta-info">
+                                        <h4>Sarah Wright</h4>
+                                        <p>Primary Guardian / Spouse</p>
+                                    </div>
+                                </div>
+                                <div class="contact-phone-number">
+                                    <span>(555) 019-2834</span>
+                                    <i class="fa-solid fa-star" style="color:var(--color-danger)"></i>
+                                </div>
+                                <div class="contact-card-actions">
+                                    <button class="btn-action-small btn-call"><i class="fa-solid fa-phone"></i> Call</button>
+                                    <button class="btn-action-small"><i class="fa-solid fa-comment-sms"></i> SMS</button>
+                                </div>
+                            </div>
+
+                            <!-- CONTACT MODULE: SP2 -->
+                            <div class="glass-panel contact-card">
+                                <div class="contact-card-top">
+                                    <div class="contact-img-wrapper">
+                                        <div class="contact-avatar-placeholder"><i class="fa-solid fa-user-group"></i></div>
+                                    </div>
+                                    <div class="contact-meta-info">
+                                        <h4>Marcus Wright</h4>
+                                        <p>Secondary Guardian / Brother</p>
+                                    </div>
+                                </div>
+                                <div class="contact-phone-number">
+                                    <span>(555) 019-8876</span>
+                                    <i class="fa-solid fa-shield-halved"></i>
+                                </div>
+                                <div class="contact-card-actions">
+                                    <button class="btn-action-small btn-call"><i class="fa-solid fa-phone"></i> Call</button>
+                                    <button class="btn-action-small"><i class="fa-solid fa-comment-sms"></i> SMS</button>
+                                </div>
+                            </div>
+
+                            <!-- CONTACT MODULE: SP3 -->
+                            <div class="glass-panel contact-card">
+                                <div class="contact-card-top">
+                                    <div class="contact-img-wrapper">
+                                        <div class="contact-avatar-placeholder"><i class="fa-solid fa-user-md"></i></div>
+                                    </div>
+                                    <div class="contact-meta-info">
+                                        <h4>Dr. Evelyn Vance</h4>
+                                        <p>Primary Care Physician</p>
+                                    </div>
+                                </div>
+                                <div class="contact-phone-number">
+                                    <span>(555) 014-9921</span>
+                                    <i class="fa-solid fa-stethoscope"></i>
+                                </div>
+                                <div class="contact-card-actions">
+                                    <button class="btn-action-small btn-call"><i class="fa-solid fa-phone"></i> Call</button>
+                                    <button class="btn-action-small"><i class="fa-solid fa-comment-sms"></i> SMS</button>
+                                </div>
+                            </div>
+
+                            <!-- PUBLIC RESCUE NODE 1 -->
+                            <div class="glass-panel contact-card priority-high">
+                                <div class="contact-card-top">
+                                    <div class="contact-img-wrapper">
+                                        <div class="contact-avatar-placeholder"><i class="fa-solid fa-truck-medical"></i></div>
+                                    </div>
+                                    <div class="contact-meta-info">
+                                        <h4>Ambulance Command</h4>
+                                        <p>Emergency Public Dispatch</p>
+                                    </div>
+                                </div>
+                                <div class="contact-phone-number">
+                                    <span>911 / 112 Standard</span>
+                                    <i class="fa-solid fa-building-shield"></i>
+                                </div>
+                                <div class="contact-card-actions">
+                                    <button class="btn-action-small btn-call"><i class="fa-solid fa-phone"></i> Route Call</button>
+                                    <button class="btn-action-small" disabled><i class="fa-solid fa-comment-slash"></i> N/A</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- RIGHT COLUMN PANEL (SYSTEM ANALYTICS & HARDWARE) -->
+                <aside class="right-monitor-panel">
+                    
+                    <!-- GRAPHICAL GAUGE ASSESSMENT COMPONENT -->
+                    <article class="glass-panel readiness-score-widget">
+                        <h4 style="font-size: 14px; font-weight: 600; color: var(--text-muted);">Incident Readiness Profile</h4>
+                        
+                        <div class="circular-gauge-box">
+                            <svg class="svg-gauge">
+                                <defs>
+                                    <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="var(--color-primary)" />
+                                        <stop offset="100%" stop-color="var(--color-secondary)" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="svg-gauge-track" cx="70" cy="70" r="60"></circle>
+                                <circle class="svg-gauge-fill" id="readinessGaugeCircle" cx="70" cy="70" r="60"></circle>
+                            </svg>
+                            <div class="gauge-inner-val">
+                                <h2 id="readinessScoreTxt">95%</h2>
+                                <p>Optimal</p>
+                            </div>
+                        </div>
+
+                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.4;">
+                            Telemetry active, local matrices loaded, fallback caches fully synched.
+                        </p>
+                    </article>
+
+                    <!-- HARDWARE METRICS AND ENVIRONMENT MONITOR -->
+                    <article class="glass-panel system-status-widget">
+                        <h4 style="font-size: 14px; font-weight:600; margin-bottom: 14px;"><i class="fa-solid fa-microchip" style="color:var(--color-primary); margin-right:8px;"></i>Local Device Environment</h4>
+                        <div class="sys-status-list">
+                            <div class="sys-status-item">
+                                <div class="sys-item-left"><i class="fa-solid fa-wifi"></i> Signal Channel</div>
+                                <div class="sys-item-right status-online" id="netStatusVal"><i class="fa-solid fa-circle" style="font-size:8px;"></i> Encrypted</div>
+                            </div>
+                            <div class="sys-status-item">
+                                <div class="sys-item-left"><i class="fa-solid fa-battery-three-quarters"></i> Local Power</div>
+                                <div class="sys-item-right status-good" id="batteryStatusVal">84% Operational</div>
+                            </div>
+                            <div class="sys-status-item">
+                                <div class="sys-item-left"><i class="fa-solid fa-server"></i> Cloud Broker Sync</div>
+                                <div class="sys-item-right" style="color:var(--text-muted)">0.04ms Latency</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- MEDICAL PROTOCOLS ADVICE CARD -->
+                    <article class="glass-panel tips-module-card">
+                        <h4 style="font-size: 14px; font-weight:600;"><i class="fa-solid fa-kit-medical" style="color:var(--color-danger); margin-right:8px;"></i>Immediate Action Matrix</h4>
+                        <div class="tips-scroller-box">
+                            <div class="tip-item-node">
+                                <div class="tip-icon-bullet"><i class="fa-solid fa-wind"></i></div>
+                                <div class="tip-body-content">
+                                    <h5>Airway Preservation</h5>
+                                    <p>Ensure patient lies flat on solid grounding structure. Clean track pathways immediately.</p>
+                                </div>
+                            </div>
+                            <div class="tip-item-node">
+                                <div class="tip-icon-bullet"><i class="fa-solid fa-compress"></i></div>
+                                <div class="tip-body-content">
+                                    <h5>Hemostasis Control</h5>
+                                    <p>Apply intense sterile load compression directly onto vascular trauma vectors.</p>
+                                </div>
+                            </div>
+                            <div class="tip-item-node">
+                                <div class="tip-icon-bullet"><i class="fa-solid fa-brain"></i></div>
+                                <div class="tip-body-content">
+                                    <h5>Consciousness Check</h5>
+                                    <p>Consistently monitor basic pupil responsiveness and clear structural sentence building.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                </aside>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ==========================================================
+         MODAL LAYER IMPLEMENTATIONS
+         ========================================================== -->
+    
+    <!-- STAGE 1: SYSTEM TRIGGER COUNTDOWN WARNING MODAL -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-container">
+            <div class="modal-icon-header danger-theme">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3>Critical Event Trigger</h3>
+            <p>You are initializing a global emergency response workflow broadcast simulation. Telemetry nodes will execute synthetic routing protocols.</p>
+            
+            <div class="countdown-timer-circle" id="countdownContainer">5</div>
+            
+            <div class="modal-actions-footer">
+                <button class="btn-premium btn-danger" id="modalForceTrigger">Deploy Broadcast Immediately</button>
+                <button class="btn-premium btn-glass" id="modalAbortTrigger">Abort Sequence</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAGE 2: ACTION SUCCESS CONFIRMATION ARCHITECTURE -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-container">
+            <div class="modal-icon-header success-theme">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3>Broadcast Array Dispatched</h3>
+            <p>The encrypted data payload containing coordinates, medical profile configurations, and triage logs has successfully updated across mock responder networks.</p>
+            <div class="modal-actions-footer">
+                <button class="btn-premium btn-primary-glow" onclick="closeAllModals()"><i class="fa-solid fa-circle-xmark"></i> Close Status Window</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STAGE 3: INTERCEPT / ABORT VERIFICATION DIALOG -->
+    <div class="modal-overlay" id="cancelModal">
+        <div class="modal-container">
+            <div class="modal-icon-header danger-theme" style="background:rgba(245,158,11,0.15); color:var(--color-warning); border-color:rgba(245,158,11,0.3)">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3>Stand Down Security Override</h3>
+            <p>Confirm authorization to terminate the emergency sequence state, clear telemetry pipelines, and resume standard local vital monitoring.</p>
+            <div class="modal-actions-footer" style="display: grid; grid-template-columns: 1fr; gap:10px;">
+                <button class="btn-premium btn-danger" id="modalConfirmCancel">Authorize Cease-Fire</button>
+                <button class="btn-premium btn-glass" onclick="closeAllModals()">Maintain Alert Posture</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================
+         CORE SYSTEM JAVASCRIPT LAYER
+         ========================================================== -->
+    <script>
+        // System Application Context State
+        let isSosSequenceActive = false;
+        let countdownTimerReference = null;
+        let countdownValue = 5;
+        let timelineIntervalReference = null;
+        let simulationStepIndex = 0;
+
+        // Core Document Elements Collection Hook
+        const sosMainBtn = document.getElementById('sosMainBtn');
+        const sosQuickTrigger = document.getElementById('sosQuickTrigger');
+        const cancelSosBtn = document.getElementById('cancelSosBtn');
+        const confirmModal = document.getElementById('confirmModal');
+        const successModal = document.getElementById('successModal');
+        const cancelModal = document.getElementById('cancelModal');
+        const countdownContainer = document.getElementById('countdownContainer');
+        const modalForceTrigger = document.getElementById('modalForceTrigger');
+        const modalAbortTrigger = document.getElementById('modalAbortTrigger');
+        const modalConfirmCancel = document.getElementById('modalConfirmCancel');
+        
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const notiBellBtn = document.getElementById('notiBellBtn');
+        const notiDropdown = document.getElementById('notiDropdown');
+        const liveDate = document.getElementById('liveDate');
+        const liveTime = document.getElementById('liveTime');
+        const shareLocBtn = document.getElementById('shareLocBtn');
+        
+        // Timeline & Metrics DOM elements hooks
+        const timelineProgress = document.getElementById('timelineProgress');
+        const readinessGaugeCircle = document.getElementById('readinessGaugeCircle');
+        const readinessScoreTxt = document.getElementById('readinessScoreTxt');
+        
+        /* ==========================================================
+           INITIALIZATION & TIMERS DATA PIPELINES
+           ========================================================== */
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSystemClock();
+            setInterval(initializeSystemClock, 1000);
+            executeTelemetryTriangulation();
+            applyGlobalComponentClickRipples();
+            setupHardwareDeviceSimulation();
+        });
+
+        function initializeSystemClock() {
+            const currentMoment = new Date();
+            
+            // Format Date safely matching system requirements
+            const dateStr = currentMoment.toLocaleDateString('en-US', {
+                year: 'numeric', month: '2-digit', day: '2-digit'
+            });
+            liveDate.innerHTML = `<i class="fa-regular fa-calendar"></i>${dateStr}`;
+            
+            // Format Time smoothly
+            const timeStr = currentMoment.toLocaleTimeString('en-US', {
+                hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            liveTime.innerHTML = `<i class="fa-regular fa-clock"></i>${timeStr}`;
+        }
+
+        function executeTelemetryTriangulation() {
+            // Simulated high-fidelity GPS accuracy processing variables
+            setTimeout(() => {
+                document.getElementById('addrVal').innerText = "Suite 400, 201 Mission St, San Francisco, CA 94105";
+            }, 1200);
+        }
+
+        function setupHardwareDeviceSimulation() {
+            // Emulate slight changes in network status or battery levels over long usage
+            if(navigator.getBattery) {
+                navigator.getBattery().then(battery => {
+                    updateBatteryDisplay(battery.level * 100);
+                    battery.addEventListener('levelchange', () => updateBatteryDisplay(battery.level * 100));
+                }).catch(() => {});
+            }
+            window.addEventListener('online', updateNetworkDisplay);
+            window.addEventListener('offline', updateNetworkDisplay);
+        }
+
+        function updateBatteryDisplay(level) {
+            document.getElementById('batteryStatusVal').innerText = `${Math.floor(level)}% Charge Node`;
+        }
+
+        function updateNetworkDisplay() {
+            const valBox = document.getElementById('netStatusVal');
+            if(navigator.onLine) {
+                valBox.className = "sys-item-right status-online";
+                valBox.innerHTML = `<i class="fa-solid fa-circle" style="font-size:8px;"></i> Encrypted`;
+            } else {
+                valBox.className = "sys-item-right";
+                valBox.style.color = "var(--color-danger)";
+                valBox.innerHTML = `<i class="fa-solid fa-circle" style="font-size:8px;"></i> Offline Local`;
+            }
+        }
+
+        /* ==========================================================
+           NAVIGATION & UI UX INTERACTION FUNCTIONS
+           ========================================================== */
+        sidebarToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sidebar.classList.toggle('open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && e.target !== sidebarToggle) {
+                sidebar.classList.remove('open');
+            }
+            if (!notiBellBtn.contains(e.target) && !notiDropdown.contains(e.target)) {
+                notiDropdown.classList.remove('show');
+            }
+        });
+
+        notiBellBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notiDropdown.classList.toggle('show');
+        });
+
+        shareLocBtn.addEventListener('click', () => {
+            document.getElementById('addrVal').innerText = "Triangulating refreshed satellite sector...";
+            setTimeout(() => {
+                const randomShift = (Math.random() - 0.5) * 0.002;
+                document.getElementById('latVal').innerText = (37.7749 + randomShift).toFixed(5) + "° N";
+                document.getElementById('lonVal').innerText = (-122.4194 + randomShift).toFixed(5) + "° W";
+                document.getElementById('addrVal').innerText = "201 Mission St (Recalibrated Vector), San Francisco, CA";
+            }, 800);
+        });
+
+        function toggleChecklistCard(element) {
+            element.classList.toggle('selected');
+            // Adjust incident readiness dynamically based on configuration variables
+            const totalSelected = document.querySelectorAll('.checklist-card.selected').length;
+            let currentScore = 95 - (totalSelected * 2);
+            readinessScoreTxt.innerText = `${currentScore}%`;
+            
+            // Adjust circle dashoffset calculation smoothly
+            const offsetValue = 440 - (440 * currentScore / 100);
+            readinessGaugeCircle.style.strokeDashoffset = offsetValue;
+        }
+
+        /* ==========================================================
+           SOS SIMULATION ENGINE LOGIC ARCHITECTURE
+           ========================================================== */
+        // User clicks the main big round glowing button
+        sosMainBtn.addEventListener('click', openCountdownTriggerSequence);
+        sosQuickTrigger.addEventListener('click', openCountdownTriggerSequence);
+
+        function openCountdownTriggerSequence() {
+            if (isSosSequenceActive) return;
+            
+            countdownValue = 5;
+            countdownContainer.innerText = countdownValue;
+            confirmModal.classList.add('show');
+            
+            // Fire interval clock ticking countdown down
+            countdownTimerReference = setInterval(() => {
+                countdownValue--;
+                countdownContainer.innerText = countdownValue;
+                
+                if (countdownValue <= 0) {
+                    clearInterval(countdownTimerReference);
+                    executeGlobalEmergencyBroadcast();
+                }
+            }, 1000);
+        }
+
+        modalForceTrigger.addEventListener('click', () => {
+            clearInterval(countdownTimerReference);
+            executeGlobalEmergencyBroadcast();
+        });
+
+        modalAbortTrigger.addEventListener('click', () => {
+            clearInterval(countdownTimerReference);
+            closeAllModals();
+        });
+
+        // Main core process function executing pipeline progression animations
+        function executeGlobalEmergencyBroadcast() {
+            closeAllModals();
+            isSosSequenceActive = true;
+            
+            // Adjust master system controls UI properties
+            cancelSosBtn.removeAttribute('disabled');
+            sosMainBtn.style.background = "linear-gradient(135deg, #1E293B, #0F172A)";
+            sosMainBtn.style.boxShadow = "0 0 30px rgba(255, 255, 255, 0.1)";
+            sosMainBtn.querySelector('span').innerText = "ACTIVE";
+            sosMainBtn.querySelector('i').className = "fa-solid fa-satellite-dish";
+            sosMainBtn.querySelector('i').style.animation = "heartbeat 0.8s infinite";
+            
+            // Initialize step metrics sequences for timeline rendering tracks
+            simulationStepIndex = 1;
+            resetTimelineNodeVisualStates();
+            advanceTimelineStateProcessing();
+            
+            timelineIntervalReference = setInterval(advanceTimelineStateProcessing, 2500);
+            
+            // Open Success Information Display Modal
+            successModal.classList.add('show');
+        }
+
+        function advanceTimelineStateProcessing() {
+            if (simulationStepIndex > 5) {
+                clearInterval(timelineIntervalReference);
+                return;
+            }
+
+            // Update Progress Percentage calculation mapping viewports appropriately
+            const isMobileView = window.innerWidth <= 768;
+            if (!isMobileView) {
+                const percentage = ((simulationStepIndex - 1) / 4) * 100;
+                timelineProgress.style.width = `${percentage}%`;
+            } else {
+                const percentage = ((simulationStepIndex - 1) / 4) * 100;
+                timelineProgress.style.height = `${percentage}%`;
+            }
+
+            // Target Node Element modifications
+            const activeNode = document.getElementById(`node${simulationStepIndex}`);
+            if (activeNode) {
+                activeNode.classList.add('active');
+                if(simulationStepIndex > 1) {
+                    const prevNode = document.getElementById(`node${simulationStepIndex - 1}`);
+                    if(prevNode) {
+                        prevNode.classList.remove('active');
+                        prevNode.classList.add('completed');
+                    }
+                }
+            }
+
+            simulationStepIndex++;
+        }
+
+        function resetTimelineNodeVisualStates() {
+            for(let idx = 1; idx <= 5; idx++) {
+                const targetNode = document.getElementById(`node${idx}`);
+                if(targetNode) targetNode.className = "timeline-node-point";
+            }
+            timelineProgress.style.width = "0%";
+            timelineProgress.style.height = "0%";
+        }
+
+        // Cancellation Intercept Request Handler Routines
+        cancelSosBtn.addEventListener('click', () => {
+            if (!isSosSequenceActive) return;
+            cancelModal.classList.add('show');
+        });
+
+        modalConfirmCancel.addEventListener('click', () => {
+            // Revert application instance metrics states completely back to normal mode baseline
+            clearInterval(timelineIntervalReference);
+            isSosSequenceActive = false;
+            
+            cancelSosBtn.setAttribute('disabled', 'true');
+            sosMainBtn.style.background = "linear-gradient(135deg, #EF4444, #B91C1C)";
+            sosMainBtn.style.boxShadow = "var(--shadow-danger-glow)";
+            sosMainBtn.querySelector('span').innerText = "SOS";
+            sosMainBtn.querySelector('i').className = "fa-solid fa-circle-radiation";
+            sosMainBtn.querySelector('i').style.animation = "none";
+            
+            resetTimelineNodeVisualStates();
+            // Default re-ensure structural framework completes default highlight loop back to baseline node
+            document.getElementById('node1').classList.add('completed');
+            
+            closeAllModals();
+        });
+
+        function closeAllModals() {
+            confirmModal.classList.remove('show');
+            successModal.classList.remove('show');
+            cancelModal.classList.remove('show');
+        }
+
+        /* ==========================================================
+           UTILITY MATERIAL DESIGN RIPPLE SYSTEM HOOK
+           ========================================================== */
+        function applyGlobalComponentClickRipples() {
+            const actionableElementsCollection = document.querySelectorAll('.btn-premium, .sos-trigger-btn, .btn-action-small, .checklist-card');
+            
+            actionableElementsCollection.forEach(element => {
+                element.addEventListener('click', function(e) {
+                    // Prevent generating duplicated components
+                    let activeRipple = this.querySelector('.ripple');
+                    if (activeRipple) activeRipple.remove();
+
+                    const clickCircleNode = document.createElement('span');
+                    clickCircleNode.classList.add('ripple');
+                    
+                    const largestBoundingRadius = Math.max(this.clientWidth, this.clientHeight);
+                    clickCircleNode.style.width = clickCircleNode.style.height = `${largestBoundingRadius}px`;
+                    
+                    const targetBoundBox = this.getBoundingClientRect();
+                    const computedXCoordinate = e.clientX - targetBoundBox.left - (largestBoundingRadius / 2);
+                    const computedYCoordinate = e.clientY - targetBoundBox.top - (largestBoundingRadius / 2);
+                    
+                    clickCircleNode.style.left = `${computedXCoordinate}px`;
+                    clickCircleNode.style.top = `${computedYCoordinate}px`;
+                    
+                    this.appendChild(clickCircleNode);
+                });
+            });
+        }
+
+        // Mock event handlers for ancillary document layout metrics tracking actions
+        document.getElementById('shareProfileBtn').addEventListener('click', () => alert("Synthetic Action: Encrypted Medical Profile exported to secure memory buffer."));
+        document.getElementById('downloadCardBtn').addEventListener('click', () => alert("Synthetic Action: Downloading high-resolution local storage emergency profile pass format..."));
+        document.getElementById('navSearch').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') {
+                alert(`Searching cluster databases for phrase target: "${this.value}"`);
+            }
+        });
+    </script>
+</body>
+</html>

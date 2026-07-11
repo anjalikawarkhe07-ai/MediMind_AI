@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - MediMind AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ==========================================================================
+           1. DESIGN SYSTEM & VARIABLES (Matching existing Dashboard)
+           ========================================================================== */
+        :root {
+            --bg-base: #081225;
+            --primary: #00D4FF;
+            --primary-glow: rgba(0, 212, 255, 0.15);
+            --secondary: #4F46E5;
+            --success: #22C55E;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            
+            /* Glassmorphism Design Specs */
+            --glass-bg: rgba(13, 27, 56, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --glass-hover: rgba(255, 255, 255, 0.12);
+            --glass-input: rgba(8, 18, 37, 0.5);
+            
+            /* Text Hierarchy */
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+            --text-dim: #64748B;
+            
+            /* Spatial & Structural Constants */
+            --sidebar-width: 260px;
+            --navbar-height: 70px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ==========================================================================
+           2. RESET & BASE LAYOUT SYSTEM
+           ========================================================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Ambient Dynamic Background Glows */
+        .ambient-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+            z-index: -1;
+            pointer-events: none;
+            animation: floatGlow 12s infinite alternate ease-in-out;
+        }
+
+        .ambient-glow-2 {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
+            bottom: -200px;
+            left: -100px;
+            z-index: -1;
+            pointer-events: none;
+            animation: floatGlow 18s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 30px) scale(1.1); }
+        }
+
+        /* App Layout Architecture */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ==========================================================================
+           3. SIDEBAR NAVIGATION COMPONENT (Identical to Dashboard)
+           ========================================================================== */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: rgba(8, 18, 37, 0.85);
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: var(--transition-smooth);
+        }
+
+        .sidebar-brand {
+            height: var(--navbar-height);
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand-logo {
+            color: var(--primary);
+            font-size: 24px;
+            margin-right: 10px;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .brand-name {
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #FFF 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 24px 16px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            margin-bottom: 6px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            font-size: 14px;
+            transition: var(--transition-smooth);
+        }
+
+        .menu-link i {
+            margin-right: 14px;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-link:hover, .menu-item.active .menu-link {
+            color: var(--text-main);
+            background: var(--glass-hover);
+        }
+
+        .menu-item.active .menu-link {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.15) 0%, rgba(79, 70, 229, 0.05) 100%);
+            border-left: 3px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            padding: 20px 16px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .user-quick-profile {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .quick-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+        }
+
+        .quick-user-info {
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .quick-user-name {
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .quick-user-role {
+            font-size: 11px;
+            color: var(--primary);
+        }
+
+        /* ==========================================================================
+           4. MAIN CONTENT CONTAINER & NAVBAR COMPONENT
+           ========================================================================== */
+        .main-content {
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-smooth);
+        }
+
+        .navbar {
+            height: var(--navbar-height);
+            background: rgba(8, 18, 37, 0.6);
+            border-bottom: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 9px 16px 9px 40px;
+            background: var(--glass-input);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            color: var(--text-main);
+            font-size: 13px;
+            transition: var(--transition-smooth);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .live-datetime {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .live-time {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn {
+            background: var(--glass-input);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        .nav-btn:hover {
+            background: var(--glass-hover);
+            border-color: var(--text-dim);
+        }
+
+        .badge-dot {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 8px;
+            height: 8px;
+            background: var(--danger);
+            border-radius: 50%;
+            border: 1px solid var(--bg-base);
+        }
+
+        /* Dropdown Architecture */
+        .dropdown-menu {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            width: 320px;
+            background: rgba(13, 27, 56, 0.95);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: fadeInDown 0.2s ease;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--glass-border);
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dropdown-items {
+            max-height: 280px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .dropdown-item:hover {
+            background: var(--glass-hover);
+        }
+
+        .dropdown-item i {
+            color: var(--primary);
+            margin-top: 3px;
+        }
+
+        .dropdown-item-text p {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .dropdown-item-text span {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ==========================================================================
+           5. PROFILE DASHBOARD WORKSPACE (GRID AND CARDS ARCHITECTURE)
+           ========================================================================== */
+        .workspace {
+            flex-grow: 1;
+            padding: 32px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* Glassmorphism Structural Cards */
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-lg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        /* Master Profile Hero Banner Card */
+        .profile-hero-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-bottom: 32px;
+            background: linear-gradient(135deg, rgba(13, 27, 56, 0.8) 0%, rgba(79, 70, 229, 0.1) 100%);
+            border-left: 4px solid var(--primary);
+        }
+
+        .profile-hero-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .avatar-uploader-container {
+            position: relative;
+            width: 110px;
+            height: 110px;
+        }
+
+        .profile-master-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .avatar-edit-trigger {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: var(--primary);
+            color: var(--bg-base);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid var(--bg-base);
+            transition: var(--transition-smooth);
+            font-size: 13px;
+        }
+
+        .avatar-edit-trigger:hover {
+            transform: scale(1.1);
+            background: #FFFFFF;
+        }
+
+        #avatar-file-input {
+            display: none;
+        }
+
+        .meta-identity-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .identity-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .identity-name {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .badge-verified {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-premium {
+            background: rgba(0, 212, 255, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .identity-subtext {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .identity-subtext span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .hero-action-cluster {
+            display: flex;
+            gap: 12px;
+        }
+
+        /* Global Typography and Form Layout Config within Cards */
+        .card-header-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 12px;
+        }
+
+        .card-header-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header-title i {
+            color: var(--primary);
+        }
+
+        /* Multi-column Grid Architecture Layouts */
+        .grid-split-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+        }
+
+        .workspace-left-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .workspace-right-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        /* Form Entry Grid Architecture */
+        .form-data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .form-field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-field-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-field-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--glass-input);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-size: 14px;
+            transition: var(--transition-smooth);
+        }
+
+        .form-field-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .form-field-input:disabled {
+            background: transparent;
+            border-color: transparent;
+            padding-left: 0;
+            font-weight: 500;
+            cursor: not-allowed;
+            color: #FFFFFF;
+        }
+
+        /* ==========================================================================
+           6. HEALTH SUMMARY & ANALYTICS METRIC COUNTERS
+           ========================================================================== */
+        .health-summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-counter-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition-smooth);
+        }
+
+        .metric-counter-card:hover {
+            background: var(--glass-hover);
+            transform: translateY(-2px);
+        }
+
+        .metric-icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .counter-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .counter-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Colors Spec for Summary Cards */
+        .m-score { background: rgba(0, 212, 255, 0.1); color: var(--primary); }
+        .m-reports { background: rgba(79, 70, 229, 0.1); color: #818CF8; }
+        .m-appoint { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+        .m-meds { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .m-ai { background: rgba(239, 68, 68, 0.1); color: var(--danger); }
+
+        /* ==========================================================================
+           7. ACCESSIBLE DIGITAL VAULT (DOCUMENTS COMPONENT)
+           ========================================================================== */
+        .document-vault-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .document-vault-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-md);
+            transition: var(--transition-smooth);
+        }
+
+        .document-vault-item:hover {
+            background: var(--glass-hover);
+        }
+
+        .document-meta-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .document-icon-wrapper {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            background: rgba(255,255,255,0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--primary);
+        }
+
+        .document-title-text {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .document-spec-subtext {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .document-action-cluster {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ==========================================================================
+           8. CORE CONFIGURATION & SETTINGS MODULE (SWITCH CONTROLS)
+           ========================================================================== */
+        .settings-toggle-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .settings-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .settings-toggle-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .toggle-label-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .toggle-heading {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .toggle-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* Custom Modern Switch Element */
+        .premium-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .premium-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .switch-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.1);
+            transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .switch-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 50%;
+        }
+
+        input:checked + .switch-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .switch-slider:before {
+            transform: translateX(20px);
+            background-color: var(--bg-base);
+        }
+
+        /* ==========================================================================
+           9. REAL-TIME AUDIT LOG & TIMELINE
+           ========================================================================== */
+        .audit-timeline {
+            position: relative;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .audit-timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .timeline-event-node {
+            position: relative;
+        }
+
+        .timeline-event-marker {
+            position: absolute;
+            left: -20px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--bg-base);
+            border: 2px solid var(--primary);
+        }
+
+        .timeline-event-node.success-node .timeline-event-marker { border-color: var(--success); }
+        .timeline-event-node.secondary-node .timeline-event-marker { border-color: var(--secondary); }
+        .timeline-event-node.warning-node .timeline-event-marker { border-color: var(--warning); }
+
+        .timeline-event-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .timeline-event-title {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .timeline-event-timestamp {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        /* ==========================================================================
+           10. RIGHT PANEL INFORMATION WIDGETS
+           ========================================================================== */
+        .widget-panel-block {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .widget-item-box {
+            padding: 14px;
+            background: rgba(255,255,255,0.02);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--glass-border);
+        }
+
+        .widget-label-micro {
+            font-size: 11px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .widget-value-prominent {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .widget-desc-mini {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .quick-tip-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        /* ==========================================================================
+           11. BUTTONS & UI INTERACTION CONTROLS
+           ========================================================================== */
+        .btn-premium {
+            padding: 10px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition-smooth);
+            border: 1px solid transparent;
+        }
+
+        .btn-primary-glow {
+            background: var(--primary);
+            color: var(--bg-base);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary-glow:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-glass-secondary {
+            background: var(--glass-input);
+            border-color: var(--glass-border);
+            color: var(--text-main);
+        }
+
+        .btn-glass-secondary:hover {
+            background: var(--glass-hover);
+            border-color: var(--text-dim);
+        }
+
+        .btn-icon-only {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            padding: 0;
+        }
+
+        .action-footer-cluster {
+            display: none;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* ==========================================================================
+           12. TOAST SYSTEM NOTACTION ALERTS
+           ========================================================================== */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .toast-alert {
+            background: rgba(13, 27, 56, 0.9);
+            border: 1px solid var(--success);
+            color: var(--text-main);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .toast-alert.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-alert i {
+            color: var(--success);
+            font-size: 18px;
+        }
+
+        /* ==========================================================================
+           13. RESPONSIVE BREAKPOINTS (Stripe & Linear level execution)
+           ========================================================================== */
+        @media (max-width: 1200px) {
+            .grid-split-layout {
+                grid-template-columns: 1fr;
+            }
+            .workspace-right-stack {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 32px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 0 16px;
+            }
+            .search-wrapper {
+                width: 180px;
+            }
+            .live-datetime {
+                display: none;
+            }
+            .workspace {
+                padding: 20px 16px;
+            }
+            .profile-hero-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .hero-action-cluster {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            .workspace-right-stack {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Visual Glow Effects -->
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="app-container">
+
+        <!-- ==========================================================================
+             SIDEBAR COMPONENT
+             ========================================================================== -->
+        <aside class="sidebar" id="app-sidebar">
+            <div class="sidebar-brand">
+                <i class="fa-solid fa-brain brand-logo"></i>
+                <span class="brand-name">MediMind AI</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="fa-solid fa-robot"></i>
+                        <span>AI Consultations</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Appointments</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="fa-solid fa-file-medical"></i>
+                        <span>Health Reports</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="fa-solid fa-pills"></i>
+                        <span>Medications</span>
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a href="#" class="menu-link">
+                        <i class="fa-solid fa-user-gear"></i>
+                        <span>My Profile</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        <span>Privacy & Security</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <div class="user-quick-profile">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" alt="Avatar" class="quick-avatar" id="sidebar-avatar">
+                    <div class="quick-user-info">
+                        <div class="quick-user-name" id="sidebar-username">Anjali</div>
+                        <div class="quick-user-role">Premium Member</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ==========================================================================
+             MAIN CONTENT SYSTEM ARCHITECTURE
+             ========================================================================== -->
+        <div class="main-content">
+            
+            <!-- NAVBAR COMPONENT -->
+            <nav class="navbar">
+                <div class="nav-left">
+                    <button class="mobile-toggle" id="sidebar-toggle-btn" aria-label="Toggle Navigation">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" class="search-input" placeholder="Search data, metrics, timeline...">
+                    </div>
+                </div>
+                <div class="nav-right">
+                    <div class="live-datetime">
+                        <span id="current-date">July 11, 2026</span>
+                        <span class="live-time" id="current-time">22:31</span>
+                    </div>
+                    <div class="nav-actions">
+                        <button class="nav-btn" id="notification-trigger" aria-label="View Notifications">
+                            <i class="fa-regular fa-bell"></i>
+                            <span class="badge-dot"></span>
+                            <!-- Dropdown System -->
+                            <div class="dropdown-menu" id="notification-dropdown">
+                                <div class="dropdown-header">
+                                    <span>Notifications</span>
+                                    <span style="color: var(--primary); font-size: 12px; cursor: pointer;">Mark all read</span>
+                                </div>
+                                <div class="dropdown-items">
+                                    <div class="dropdown-item">
+                                        <i class="fa-solid fa-circle-check"></i>
+                                        <div class="dropdown-item-text">
+                                            <p>Your blood analysis report has been verified by AI.</p>
+                                            <span>2 hours ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <i class="fa-solid fa-calendar"></i>
+                                        <div class="dropdown-item-text">
+                                            <p>Appointment confirmed with Dr. Malhotra.</p>
+                                            <span>Yesterday</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                        <button class="nav-btn" aria-label="Settings Quick Link">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- WORKSPACE CONTAINER -->
+            <main class="workspace">
+                
+                <div class="page-header">
+                    <h1 class="page-title">My Profile</h1>
+                    <p class="page-subtitle">Manage your personal information and healthcare details.</p>
+                </div>
+
+                <!-- PROFILE HERO CARD -->
+                <section class="glass-card profile-hero-card">
+                    <div class="profile-hero-left">
+                        <div class="avatar-uploader-container">
+                            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" alt="Master Profile Avatar" class="profile-master-avatar" id="master-avatar">
+                            <label for="avatar-file-input" class="avatar-edit-trigger" title="Upload New Photo">
+                                <i class="fa-solid fa-camera"></i>
+                            </label>
+                            <input type="file" id="avatar-file-input" accept="image/*">
+                        </div>
+                        <div class="meta-identity-block">
+                            <div class="identity-row">
+                                <h2 class="identity-name" id="display-name">Anjali</h2>
+                                <span class="badge badge-verified"><i class="fa-solid fa-circle-check"></i> Verified ID</span>
+                                <span class="badge badge-premium"><i class="fa-solid fa-crown"></i> Premium Account</span>
+                            </div>
+                            <div class="identity-subtext">Patient ID: <span style="color: var(--primary); font-weight:600;">MM-2026-8941</span></div>
+                            <div class="identity-subtext">Member Since: <span>January 14, 2024</span></div>
+                        </div>
+                    </div>
+                    <div class="hero-action-cluster">
+                        <button class="btn-premium btn-glass-secondary" id="download-profile-btn">
+                            <i class="fa-solid fa-download"></i> Download Profile
+                        </button>
+                        <button class="btn-premium btn-primary-glow" id="global-edit-btn">
+                            <i class="fa-solid fa-user-pen"></i> Edit Profile
+                        </button>
+                    </div>
+                </section>
+
+                <!-- MAIN MULTI-COLUMN INTERFACE SYSTEM -->
+                <div class="grid-split-layout">
+                    
+                    <!-- LEFT COLUMN STACK -->
+                    <div class="workspace-left-stack">
+                        
+                        <!-- HEALTH SUMMARY BLOCK -->
+                        <section class="glass-card">
+                            <div class="card-header-group">
+                                <h3 class="card-header-title"><i class="fa-solid fa-chart-heart"></i>Health Insights Summary</h3>
+                            </div>
+                            <div class="health-summary-row">
+                                <div class="metric-counter-card">
+                                    <div class="metric-icon-box m-score"><i class="fa-solid fa-heart-pulse"></i></div>
+                                    <div class="counter-value" data-target="94">0</div>
+                                    <div class="counter-label">Health Score</div>
+                                </div>
+                                <div class="metric-counter-card">
+                                    <div class="metric-icon-box m-reports"><i class="fa-solid fa-folder-open"></i></div>
+                                    <div class="counter-value" data-target="28">0</div>
+                                    <div class="counter-label">Reports Uploaded</div>
+                                </div>
+                                <div class="metric-counter-card">
+                                    <div class="metric-icon-box m-appoint"><i class="fa-solid fa-calendar-check"></i></div>
+                                    <div class="counter-value" data-target="42">0</div>
+                                    <div class="counter-label">Appointments</div>
+                                </div>
+                                <div class="metric-counter-card">
+                                    <div class="metric-icon-box m-meds"><i class="fa-solid fa-capsules"></i></div>
+                                    <div class="counter-value" data-target="3">0</div>
+                                    <div class="counter-label">Active Meds</div>
+                                </div>
+                                <div class="metric-counter-card">
+                                    <div class="metric-icon-box m-ai"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                                    <div class="counter-value" data-target="115">0</div>
+                                    <div class="counter-label">AI Consults</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- DATA CAPTURE AND FORM ENGINE INTERFACE -->
+                        <form id="profile-master-form" onsubmit="event.preventDefault();">
+                            <div style="display: flex; flex-direction: column; gap: 32px;">
+                                
+                                <!-- PERSONAL PROFILE GRID -->
+                                <fieldset class="glass-card" style="border: 1px solid var(--glass-border); padding:24px;">
+                                    <div class="card-header-group">
+                                        <h3 class="card-header-title"><i class="fa-solid fa-user"></i>Personal Information</h3>
+                                    </div>
+                                    <div class="form-data-grid">
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Full Name</label>
+                                            <input type="text" class="form-field-input" value="Anjali Sharma" disabled required data-name-sync>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Email Address</label>
+                                            <input type="email" class="form-field-input" value="anjali.sharma@medimind.ai" disabled required>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Phone Number</label>
+                                            <input type="tel" class="form-field-input" value="+91 98765 43210" disabled required>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Date of Birth</label>
+                                            <input type="date" class="form-field-input" value="1996-08-24" disabled required>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Age</label>
+                                            <input type="number" class="form-field-input" value="29" disabled readonly>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Gender</label>
+                                            <input type="text" class="form-field-input" value="Female" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Occupation</label>
+                                            <input type="text" class="form-field-input" value="Senior UX Researcher" disabled>
+                                        </div>
+                                        <div class="form-field-group" style="grid-column: span 2;">
+                                            <label class="form-field-label">Residential Address</label>
+                                            <input type="text" class="form-field-input" value="Fl-402, Quantum Towers, Hitech City, Hyderabad, India" disabled>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <!-- CLINICAL HEALTH DATA CARD -->
+                                <fieldset class="glass-card" style="border: 1px solid var(--glass-border); padding:24px;">
+                                    <div class="card-header-group">
+                                        <h3 class="card-header-title"><i class="fa-solid fa-notes-medical"></i>Clinical & Health Information</h3>
+                                    </div>
+                                    <div class="form-data-grid">
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Blood Group</label>
+                                            <input type="text" class="form-field-input" value="O+ Positive" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Height</label>
+                                            <input type="text" class="form-field-input" value="168 cm" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Weight</label>
+                                            <input type="text" class="form-field-input" value="62 kg" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Calculated BMI</label>
+                                            <input type="text" class="form-field-input" value="22.0 (Normal)" disabled readonly>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Allergies</label>
+                                            <input type="text" class="form-field-input" value="Penicillin, Peanuts" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Medical Conditions</label>
+                                            <input type="text" class="form-field-input" value="Mild Asthma" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Current Medications</label>
+                                            <input type="text" class="form-field-input" value="Inhaler (as needed)" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Insurance Provider</label>
+                                            <input type="text" class="form-field-input" value="Star Health Insurance" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Policy Number</label>
+                                            <input type="text" class="form-field-input" value="SZ-9082-114" disabled>
+                                        </div>
+                                        <div class="form-field-group">
+                                            <label class="form-field-label">Organ Donor Status</label>
+                                            <input type="text" class="form-field-input" value="Registered Donor" disabled>
+                                        </div>
+                                    </div>
+
+                                    <!-- INLINE EDIT ACTION INTERFACE CONTROLS -->
+                                    <div class="action-footer-cluster" id="form-action-controls">
+                                        <button type="button" class="btn-premium btn-glass-secondary" id="form-cancel-btn">Cancel</button>
+                                        <button type="submit" class="btn-premium btn-primary-glow" id="form-save-btn">Save System Changes</button>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </form>
+
+                        <!-- DIGITAL VAULT SYSTEM -->
+                        <section class="glass-card">
+                            <div class="card-header-group">
+                                <h3 class="card-header-title"><i class="fa-solid fa-vault"></i>Digital Health Vault</h3>
+                            </div>
+                            <div class="document-vault-list">
+                                <div class="document-vault-item">
+                                    <div class="document-meta-left">
+                                        <div class="document-icon-wrapper"><i class="fa-regular fa-file-pdf"></i></div>
+                                        <div>
+                                            <div class="document-title-text">Complete Blood Count Analysis.pdf</div>
+                                            <div class="document-spec-subtext">Verified by AI • 2.4 MB • Uploaded May 12, 2026</div>
+                                        </div>
+                                    </div>
+                                    <div class="document-action-cluster">
+                                        <button class="btn-premium btn-glass-secondary btn-icon-only" title="View Document"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn-premium btn-glass-secondary btn-icon-only" title="Download Document"><i class="fa-solid fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <div class="document-vault-item">
+                                    <div class="document-meta-left">
+                                        <div class="document-icon-wrapper"><i class="fa-regular fa-id-card"></i></div>
+                                        <div>
+                                            <div class="document-title-text">Health Insurance Premium Card.pdf</div>
+                                            <div class="document-spec-subtext">Active • 1.1 MB • Updated Jan 01, 2026</div>
+                                        </div>
+                                    </div>
+                                    <div class="document-action-cluster">
+                                        <button class="btn-premium btn-glass-secondary btn-icon-only" title="View Document"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn-premium btn-glass-secondary btn-icon-only" title="Download Document"><i class="fa-solid fa-download"></i></button>
+                                    </div>
+                                </div>
+                                <div class="document-vault-item">
+                                    <div class="document-meta-left">
+                                        <div class="document-icon-wrapper"><i class="fa-solid fa-syringe"></i></div>
+                                        <div>
+                                            <div class="document-title-text">Vaccination Certificate v4.pdf</div>
+                                            <div class="document-spec-subtext">International Format • 950 KB • Uploaded Aug 18, 2025</div>
+                                        </div>
+                                    </div>
+                                    <div class="document-action-cluster">
+                                        <button class="btn-premium btn-glass-secondary btn-icon-only" title="View Document"><i class="fa-solid fa-eye"></i></button>
+                                        <button class="btn-premium btn-glass-secondary btn-icon-only" title="Download Document"><i class="fa-solid fa-download"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN STACK (System Controls and Widgets) -->
+                    <div class="workspace-right-stack">
+                        
+                        <!-- APP PREFERENCES & CONTROLS CONFIG -->
+                        <section class="glass-card">
+                            <div class="card-header-group">
+                                <h3 class="card-header-title"><i class="fa-solid fa-sliders"></i>Account Settings</h3>
+                            </div>
+                            <div class="settings-toggle-list">
+                                <div class="settings-toggle-row">
+                                    <div class="toggle-label-block">
+                                        <div class="toggle-heading">Two-Factor Authentication</div>
+                                        <div class="toggle-desc">Secure account with secondary biometric device token</div>
+                                    </div>
+                                    <label class="premium-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-toggle-row">
+                                    <div class="toggle-label-block">
+                                        <div class="toggle-heading">AI Vital Diagnostics Alerts</div>
+                                        <div class="toggle-desc">Receive critical processing warnings immediately via SMS</div>
+                                    </div>
+                                    <label class="premium-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-toggle-row">
+                                    <div class="toggle-label-block">
+                                        <div class="toggle-heading">Weekly Health Summaries</div>
+                                        <div class="toggle-desc">Compile automated deep-dive reports to primary email</div>
+                                    </div>
+                                    <label class="premium-switch">
+                                        <input type="checkbox">
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="settings-toggle-row">
+                                    <div class="toggle-label-block">
+                                        <div class="toggle-heading">System Interface Dark Mode</div>
+                                        <div class="toggle-desc">Toggle premium dark UI core parameters</div>
+                                    </div>
+                                    <label class="premium-switch">
+                                        <input type="checkbox" checked id="dark-mode-toggle-ui">
+                                        <span class="switch-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- COMPACT QUICK ASSISTANCE DATA WIDGET PANEL -->
+                        <section class="glass-card">
+                            <div class="card-header-group">
+                                <h3 class="card-header-title"><i class="fa-solid fa-address-book"></i>Primary Medical Contacts</h3>
+                            </div>
+                            <div class="widget-panel-block">
+                                <div class="widget-item-box" style="border-left: 3px solid var(--danger);">
+                                    <div class="widget-label-micro">Emergency Contact (SOS)</div>
+                                    <div class="widget-value-prominent">Vikram Sharma (Spouse)</div>
+                                    <div class="widget-desc-mini"><i class="fa-solid fa-phone" style="color:var(--danger); margin-right:4px;"></i> +91 98765 43211</div>
+                                </div>
+                                <div class="widget-item-box" style="border-left: 3px solid var(--primary);">
+                                    <div class="widget-label-micro">Family Physician</div>
+                                    <div class="widget-value-prominent">Dr. Amit Malhotra (Cardiologist)</div>
+                                    <div class="widget-desc-mini"><i class="fa-solid fa-hospital" style="color:var(--primary); margin-right:4px;"></i> Max Super Hospital</div>
+                                </div>
+                                <div class="widget-item-box">
+                                    <div class="widget-label-micro">Next Scheduled Appointment</div>
+                                    <div class="widget-value-prominent">July 15, 2026 at 10:30 AM</div>
+                                    <div class="widget-desc-mini">Routine Pulmonary Evaluation</div>
+                                </div>
+                                <div class="widget-item-box quick-tip-box">
+                                    <div class="widget-label-micro" style="color: var(--primary);">Smart AI Health Recommendation</div>
+                                    <div class="widget-desc-mini" style="color: #FFFFFF; font-size:13px; line-height:1.4;">"Based on your mild asthma history and humidity shifts logged this morning, avoid high-intensity outdoor training before 08:00 AM."</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- EVENT TIMELINE COMPONENT -->
+                        <section class="glass-card">
+                            <div class="card-header-group">
+                                <h3 class="card-header-title"><i class="fa-solid fa-clock-rotate-left"></i>Recent Account Activity</h3>
+                            </div>
+                            <div class="audit-timeline">
+                                <div class="timeline-event-node success-node">
+                                    <div class="timeline-event-marker"></div>
+                                    <div class="timeline-event-content">
+                                        <div class="timeline-event-title">Profile Security Verification Completed</div>
+                                        <div class="timeline-event-timestamp">Today, 18:42</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-event-node secondary-node">
+                                    <div class="timeline-event-marker"></div>
+                                    <div class="timeline-event-content">
+                                        <div class="timeline-event-title">Medical Lab Diagnostics Uploaded</div>
+                                        <div class="timeline-event-timestamp">Yesterday, 14:15</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-event-node warning-node">
+                                    <div class="timeline-event-marker"></div>
+                                    <div class="timeline-event-content">
+                                        <div class="timeline-event-title">Allergy Metrics Re-evaluated by AI Engine</div>
+                                        <div class="timeline-event-timestamp">July 08, 2026</div>
+                                    </div>
+                                </div>
+                                <div class="timeline-event-node">
+                                    <div class="timeline-event-marker"></div>
+                                    <div class="timeline-event-content">
+                                        <div class="timeline-event-title">Renewed Premium Membership Tier Plan</div>
+                                        <div class="timeline-event-timestamp">June 24, 2026</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- GLOBAL NOTIFICATION TOAST COMPONENT -->
+    <div class="toast-container">
+        <div class="toast-alert" id="success-toast">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+                <strong style="display:block; font-size:14px;">System Execution Completed</strong>
+                <span style="font-size:12px; color: var(--text-muted);" id="toast-message">Data records updated successfully.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         VANILLA JAVASCRIPT APPLICATION CORE LOGIC
+         ========================================================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. SYSTEM CHRONOS REAL-TIME CLOCK ENGINE
+            const updateSystemTime = () => {
+                const timeNode = document.getElementById('current-time');
+                const dateNode = document.getElementById('current-date');
+                const now = new Date();
+                
+                // Format matching enterprise aesthetic
+                timeNode.textContent = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                dateNode.textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+            };
+            setInterval(updateSystemTime, 1000);
+            updateSystemTime();
+
+            // 2. INTERACTION EVENT: RESPONSIVE SIDEBAR TOGGLE
+            const toggleBtn = document.getElementById('sidebar-toggle-btn');
+            const sidebar = document.getElementById('app-sidebar');
+            
+            toggleBtn.addEventListener('click', (e) => {
+                sidebar.classList.toggle('active');
+                e.stopPropagation();
+            });
+
+            document.addEventListener('click', (e) => {
+                if(sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== toggleBtn) {
+                    sidebar.classList.remove('active');
+                }
+            });
+
+            // 3. INTERACTION EVENT: NOTIFICATION DROPDOWN ARCHITECTURE
+            const notifTrigger = document.getElementById('notification-trigger');
+            const notifDropdown = document.getElementById('notification-dropdown');
+
+            notifTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const visible = notifDropdown.style.display === 'flex';
+                notifDropdown.style.display = visible ? 'none' : 'flex';
+            });
+
+            document.addEventListener('click', () => {
+                notifDropdown.style.display = 'none';
+            });
+
+            // 4. METRIC INTERPOLATION ANIMATION ENGINE (COUNTERS)
+            const counters = document.querySelectorAll('.counter-value');
+            
+            const animateCounters = () => {
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'), 10);
+                    const duration = 1200; // ms
+                    const startTime = performance.now();
+
+                    const step = (currentTime) => {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        // Easing out calculation
+                        const easeProgress = 1 - Math.pow(1 - progress, 3);
+                        counter.textContent = Math.floor(easeProgress * target);
+
+                        if (progress < 1) {
+                            requestAnimationFrame(step);
+                        } else {
+                            counter.textContent = target;
+                        }
+                    };
+                    requestAnimationFrame(step);
+                });
+            };
+
+            // Intersection Observer to trigger counters when visible
+            const observerOptions = { threshold: 0.1 };
+            const counterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if(entry.isIntersecting) {
+                        animateCounters();
+                        counterObserver.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            const summarySection = document.querySelector('.health-summary-row');
+            if(summarySection) counterObserver.observe(summarySection);
+
+            // 5. DATA ENGINE: INLINE EDITABLE FORM FRAMEWORK
+            const globalEditBtn = document.getElementById('global-edit-btn');
+            const formActionControls = document.getElementById('form-action-controls');
+            const formInputs = document.querySelectorAll('#profile-master-form .form-field-input');
+            const cancelBtn = document.getElementById('form-cancel-btn');
+            const masterForm = document.getElementById('profile-master-form');
+            const nameSyncInputs = document.querySelectorAll('[data-name-sync]');
+            const topDisplayName = document.getElementById('display-name');
+            const sidebarUsername = document.getElementById('sidebar-username');
+
+            // Cache system variables for rolling back form values on cancel
+            let formStateCache = {};
+
+            const setFormEditingState = (isEditing) => {
+                if(isEditing) {
+                    // Cache existing values prior to modifications
+                    formInputs.forEach((input, index) => {
+                        if(!input.readOnly) {
+                            formStateCache[index] = input.value;
+                            input.disabled = false;
+                        }
+                    });
+                    globalEditBtn.style.display = 'none';
+                    formActionControls.style.display = 'flex';
+                    formInputs[0].focus();
+                } else {
+                    formInputs.forEach(input => input.disabled = true);
+                    formActionControls.style.display = 'none';
+                    globalEditBtn.style.display = 'inline-flex';
+                }
+            };
+
+            globalEditBtn.addEventListener('click', () => setFormEditingState(true));
+
+            cancelBtn.addEventListener('click', () => {
+                // Restore state from pristine cache object
+                formInputs.forEach((input, index) => {
+                    if(!input.readOnly && formStateCache[index] !== undefined) {
+                        input.value = formStateCache[index];
+                    }
+                });
+                setFormEditingState(false);
+                showToast("Changes reverted.", "System rolled back modifications.");
+            });
+
+            masterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Perform structural data validation
+                let formIsValid = true;
+                formInputs.forEach(input => {
+                    if(input.required && !input.value.trim()) {
+                        formIsValid = false;
+                        input.style.borderColor = 'var(--danger)';
+                    } else {
+                        input.style.borderColor = 'var(--glass-border)';
+                    }
+                });
+
+                if(!formIsValid) {
+                    showToast("Validation Error", "Please fill in all mandatory fields.", true);
+                    return;
+                }
+
+                // Dynamic System Sync for Display Names across components
+                nameSyncInputs.forEach(input => {
+                    if(input.value.trim()) {
+                        const targetName = input.value.split(' ')[0]; // Grab first name matching UI baseline
+                        topDisplayName.textContent = targetName;
+                        sidebarUsername.textContent = targetName;
+                    }
+                });
+
+                setFormEditingState(false);
+                showToast("System Updated", "Profile and biological indicators synchronized successfully.");
+            });
+
+            // 6. AVATAR STREAMING ENGINE (IMAGE PREVIEW)
+            const avatarFileInput = document.getElementById('avatar-file-input');
+            const masterAvatar = document.getElementById('master-avatar');
+            const sidebarAvatar = document.getElementById('sidebar-avatar');
+
+            avatarFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if(file.size > 3 * 1024 * 1024) { // 3MB Safety Boundary Guard
+                        showToast("File Rejected", "Image size must be less than 3MB.", true);
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const base64URI = event.target.result;
+                        masterAvatar.src = base64URI;
+                        sidebarAvatar.src = base64URI;
+                        showToast("Avatar Processed", "System image array updated.");
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // 7. TOAST NOTIFICATION UTILITY PIPELINE
+            const toastElement = document.getElementById('success-toast');
+            const toastMsgNode = document.getElementById('toast-message');
+
+            const showToast = (title, message, isError = false) => {
+                toastElement.style.border = isError ? '1px solid var(--danger)' : '1px solid var(--success)';
+                toastElement.querySelector('i').style.color = isError ? 'var(--danger)' : 'var(--success)';
+                toastElement.querySelector('strong').textContent = title;
+                toastMsgNode.textContent = message;
+                
+                toastElement.classList.add('show');
+                setTimeout(() => {
+                    toastElement.classList.remove('show');
+                }, 4000);
+            };
+
+            // 8. DATA EXPORT LAYER (Download Profile Architecture simulation)
+            document.getElementById('download-profile-btn').addEventListener('click', () => {
+                showToast("Generating Archive", "Compiling diagnostic telemetry profile data...");
+                setTimeout(() => {
+                    showToast("Export Ready", "MediMind_Patient_Profile.json downloaded to secure storage.");
+                }, 1500);
+            });
+
+            // 9. DARK MODE MOCK SWITCH INTERACTION
+            const uiModeSwitch = document.getElementById('dark-mode-toggle-ui');
+            uiModeSwitch.addEventListener('change', (e) => {
+                if(!e.target.checked) {
+                    showToast("System Warning", "High ambient luminosity mode requires secondary license configurations.", true);
+                    e.target.checked = true; // Rollback enforcement to preserve style guides
+                }
+            });
+        });
+    </script>
+</body>
+</html>
