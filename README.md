@@ -90,6 +90,14 @@ assets/
 
 🚧 Frontend ↔ Backend Integration in Progress
 
+## Workflow Screenshots
+
+### n8n AI Agent Workflow
+![MediMind AI n8n Workflow](screenshots/MediMindAI_n8n_Workflow.png)
+
+### Backend API Workflow
+![MediMind AI Backend API](screenshots/MediMindAI_Backend_API.png)
+
 ---
 
 ## 👩‍💻 Developed By
