@@ -46,16 +46,22 @@ MediMind AI introduces a Multi-Agent AI architecture where specialized AI agents
 
 ## ⚙️ Technology Stack
 
-- React
-- Tailwind CSS
-- Node.js
-- Express.js
-- n8n
-- LangGraph (Planned)
-- OpenAI / Google Gemini API
-- Supabase
-- Google OAuth
+Frontend
+• HTML5
+• CSS3
+• JavaScript
 
+Backend
+• n8n
+• OpenAI API
+
+Database
+• Supabase PostgreSQL
+
+Development
+• Visual Studio Code
+• Git
+• GitHub
 ---
 
 ## 📂 Repository Structure
@@ -72,9 +78,17 @@ assets/
 
 ## 📈 Project Status
 
-✅ Documentation Completed
+## 📈 Project Status
 
-🚧 Development In Progress
+✅ Frontend Completed
+
+✅ Backend Workflow Developed
+
+✅ OpenAI Integration
+
+✅ Supabase Integration
+
+🚧 Frontend ↔ Backend Integration in Progress
 
 ---
 
